@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control — Your Comeback System</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b12;--bg2:#0e1320;--bg3:#141c2e;
+    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+    --text:#eef0f6;--text2:#8892a4;--text3:#424e65;
+    --accent:#f5c842;--accent2:#e0a820;--accent3:#ffd96a;
+    --green:#4ade80;--green-bg:rgba(74,222,128,0.1);
+    --red:#f87171;--red-bg:rgba(248,113,113,0.1);
+    --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.1);
+    --amber:#fb923c;--amber-bg:rgba(251,146,60,0.1);
+    --purple:#c084fc;--purple-bg:rgba(192,132,252,0.1);
+    --teal:#2dd4bf;--teal-bg:rgba(45,212,191,0.1);
+    --r:10px;--r2:16px;
+    --glow:0 0 32px rgba(245,200,66,0.15);
+    --aurora1:rgba(45,212,191,0.06);
+    --aurora2:rgba(192,132,252,0.05);
+    --aurora3:rgba(245,200,66,0.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Satoshi',sans-serif;
+    font-size:15px;line-height:1.6;min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% 0%,var(--aurora1) 0%,transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%,var(--aurora2) 0%,transparent 60%),
+      radial-gradient(ellipse 50% 60% at 50% 100%,var(--aurora3) 0%,transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 60%,rgba(45,212,191,0.03) 0%,transparent 50%);
+  }
+  .shell{display:flex;min-height:100vh}
+  .sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:2rem 1.25rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:1.5rem;box-shadow:4px 0 32px rgba(0,0,0,0.4);background-image:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(45,212,191,0.04) 0%,transparent 70%)}
+  .main{flex:1;padding:2rem 2.5rem;max-width:900px;position:relative}
+  .logo{font-family:'Clash Display',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.01em;background:linear-gradient(135deg,var(--teal) 0%,var(--accent3) 60%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .logo span{color:var(--text3);font-weight:400}
+  .nav-section{display:flex;flex-direction:column;gap:4px}
+  .nav-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:6px}
+  .nav-item{padding:8px 12px;border-radius:var(--r);font-size:14px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.15s;border:none;background:transparent;width:100%;text-align:left;font-family:'Satoshi',sans-serif}
+  .nav-item:hover{background:var(--bg3);color:var(--text)}
+  .nav-item.active{background:rgba(45,212,191,0.08);color:var(--teal);border:1px solid rgba(45,212,191,0.2);box-shadow:inset 0 0 16px rgba(45,212,191,0.06)}
+  .nav-icon{width:18px;text-align:center;font-size:15px}
+  .xp-card{background:linear-gradient(135deg,#071a18 0%,#0a1220 50%,#13100a 100%);border:1px solid rgba(45,212,191,0.2);border-radius:var(--r2);padding:1rem;margin-top:auto;box-shadow:0 0 32px rgba(45,212,191,0.1),0 0 20px rgba(245,200,66,0.08)}
+  .xp-label{font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+  .xp-val{font-family:'Clash Display',sans-serif;font-size:30px;font-weight:700;color:var(--accent);letter-spacing:-0.02em}
+  .xp-sub{font-size:12px;color:var(--text3);margin-top:2px}
+  .level-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:10px;overflow:hidden}
+  .level-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent3));border-radius:2px;transition:width 0.6s;box-shadow:0 0 8px rgba(245,200,66,0.4)}
+
+  .page{display:none}.page.active{display:block}
+  .page-header{margin-bottom:2rem}
+  .page-title{font-family:'Clash Display',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.02em;background:linear-gradient(120deg,#ffffff 0%,var(--teal) 45%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .page-sub{color:var(--text2);font-size:14px;margin-top:4px}
+
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+  .stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.25rem;transition:all 0.25s}.stat-box:hover{border-color:rgba(45,212,191,0.3);box-shadow:0 0 20px rgba(45,212,191,0.06),0 4px 16px rgba(0,0,0,0.3)}
+  .stat-num{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:var(--accent);letter-spacing:-0.02em}
+  .stat-lbl{font-size:12px;color:var(--text3);margin-top:2px}
+
+  .pillar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:1.25rem;overflow:hidden;transition:border-color 0.2s}.pillar:hover{border-color:var(--border2)}
+  .pillar-head{padding:1rem 1.25rem 0.75rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+  .pillar-head:hover{background:rgba(255,255,255,0.02)}
+  .pillar-info{display:flex;align-items:center;gap:10px}
+  .pillar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .pillar-name{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;letter-spacing:-0.01em}
+  .pillar-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+  .pillar-right{display:flex;align-items:center;gap:12px}
+  .pillar-pts{font-size:12px;color:var(--text3)}
+  .pillar-chevron{color:var(--text3);transition:transform 0.2s;font-size:12px}
+  .pillar.open .pillar-chevron{transform:rotate(180deg)}
+  .pillar-progress{height:3px;background:rgba(255,255,255,0.06)}
+  .pillar-progress-fill{height:100%;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+  .pillar-body{display:none;padding:0.5rem 0}
+  .pillar.open .pillar-body{display:block}
+
+  .task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 1.25rem;border-top:1px solid var(--border);transition:background 0.1s}
+  .task-item:hover{background:rgba(255,255,255,0.02)}
+  .check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-size:12px;color:transparent}
+  .check:hover{border-color:var(--accent2);background:rgba(232,213,163,0.05)}
+  .check.done{background:var(--green);border-color:var(--green);color:#0a1a10}
+  .task-text{flex:1;min-width:0}
+  .task-name{font-size:14px;color:var(--text);line-height:1.4}
+  .task-name.crossed{text-decoration:line-through;color:var(--text3)}
+  .task-meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center}
+  .chip{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+  .chip-pts{background:var(--green-bg);color:var(--green)}
+  .chip-phase{background:var(--blue-bg);color:var(--blue)}
+  .chip-time-est{background:var(--amber-bg);color:var(--amber)}
+  .chip-custom{background:rgba(255,255,255,0.06);color:var(--text3)}
+  .chip-logged{background:rgba(86,168,245,0.12);color:var(--blue)}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+  .modal-overlay.hidden{display:none}
+  .modal{background:var(--bg2);border:1px solid rgba(245,200,66,0.2);border-radius:var(--r2);padding:1.75rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(245,200,66,0.06)}
+  .modal-title{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.02em}
+  .modal-sub{font-size:13px;color:var(--text3);margin-bottom:1.25rem;line-height:1.5}
+  .modal-task-name{font-size:13px;color:var(--accent2);margin-bottom:1.25rem;padding:8px 12px;background:rgba(232,213,163,0.06);border-radius:var(--r);border-left:3px solid var(--accent2)}
+  .time-inputs{display:flex;gap:10px;margin-bottom:1.25rem}
+  .time-field{flex:1;display:flex;flex-direction:column;gap:6px}
+  .time-field label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500}
+  .time-field input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;color:var(--text);font-size:18px;font-family:'Clash Display',sans-serif;font-weight:600;outline:none;text-align:center;width:100%}
+  .time-field input:focus{border-color:var(--accent2)}
+  .time-field input::placeholder{color:var(--text3);font-size:14px;font-family:'Satoshi',sans-serif;font-weight:400}
+  .modal-btns{display:flex;gap:8px}
+  .btn-primary{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0f0e00;border:none;border-radius:var(--r);padding:11px;font-size:14px;font-weight:600;font-family:'Satoshi',sans-serif;cursor:pointer;transition:all 0.15s;box-shadow:0 2px 12px rgba(245,200,66,0.25)}.btn-primary:hover{box-shadow:0 4px 20px rgba(245,200,66,0.35);transform:translateY(-1px)}
+  .btn-primary:hover{opacity:0.85}
+  .btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:var(--r);padding:11px 16px;font-size:14px;font-family:'Satoshi',sans-serif;cursor:pointer;transition:all 0.15s}
+  .btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+
+  .sec-div{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--teal);margin:1.5rem 0 0.75rem;display:flex;align-items:center;gap:10px}
+  .sec-div::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(45,212,191,0.25),transparent)}
+
+  .week-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1.25rem}
+  .week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+  .week-title{font-family:'Clash Display',sans-serif;font-size:16px;font-weight:700}
+  .week-num{font-size:12px;color:var(--text3)}
+  .add-task-row{display:flex;gap:8px;margin-top:1rem}
+  .add-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;color:var(--text);font-size:14px;font-family:'Satoshi',sans-serif;outline:none}
+  .add-input:focus{border-color:var(--border2)}
+  .add-input::placeholder{color:var(--text3)}
+  .add-btn{background:var(--accent);color:#1a1200;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:500;font-family:'Satoshi',sans-serif;cursor:pointer;white-space:nowrap}
+  .add-btn:hover{opacity:0.85}
+  .del-btn{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 4px;line-height:1;transition:color 0.15s}
+  .del-btn:hover{color:var(--red)}
+
+  /* ── SOCIAL MEDIA ── */
+  .sm-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-bottom:1.25rem}
+  .sm-card.warn{background:rgba(242,153,74,0.06);border-color:rgba(242,153,74,0.3)}
+  .sm-card.over{background:rgba(235,87,87,0.06);border-color:rgba(235,87,87,0.4)}
+  .sm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+  .sm-title{font-family:'Clash Display',sans-serif;font-size:16px;font-weight:700}
+  .sm-badge{font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500}
+  .sm-badge.safe{background:var(--green-bg);color:var(--green)}
+  .sm-badge.warn{background:var(--amber-bg);color:var(--amber)}
+  .sm-badge.over{background:var(--red-bg);color:var(--red)}
+  .sm-ring-row{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.25rem}
+  .sm-ring{position:relative;width:100px;height:100px;flex-shrink:0}
+  .sm-ring svg{transform:rotate(-90deg)}
+  .sm-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .sm-ring-time{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1}
+  .sm-ring-sub{font-size:10px;color:var(--text3);margin-top:3px}
+  .sm-info{flex:1}
+  .sm-budget-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);margin-bottom:10px}
+  .sm-num-input{width:64px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:14px;font-family:'Clash Display',sans-serif;font-weight:600;outline:none;text-align:center}
+  .sm-num-input:focus{border-color:var(--accent2)}
+  .sm-log-today{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem}
+  .sm-log-label{font-size:12px;color:var(--text3);margin-bottom:8px}
+  .sm-log-row{display:flex;gap:8px;align-items:center}
+  .sm-log-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;color:var(--text);font-size:14px;font-family:'Clash Display',sans-serif;font-weight:600;outline:none;text-align:center;max-width:100px}
+  .sm-log-input:focus{border-color:var(--accent2)}
+  .sm-save-btn{background:var(--accent);color:#1a1200;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:500;font-family:'Satoshi',sans-serif;cursor:pointer}
+  .sm-save-btn:hover{opacity:0.85}
+  .sm-history-item{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border);font-size:13px}
+
+  /* ── TIME TRACKER ── */
+  .tt-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+  .tt-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .tt-bar-label{font-size:13px;color:var(--text2);width:180px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tt-bar-outer{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+  .tt-bar-fill{height:100%;border-radius:4px;transition:width 0.5s}
+  .tt-bar-val{font-size:12px;color:var(--text3);width:50px;text-align:right;flex-shrink:0}
+  .tt-log-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:13px;gap:8px}
+  .tt-log-name{color:var(--text2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tt-log-pillar{font-size:11px;padding:2px 8px;border-radius:10px;flex-shrink:0}
+  .tt-log-dur{color:var(--text);font-weight:500;font-family:'Clash Display',sans-serif;flex-shrink:0}
+
+  /* ── ROADMAP / GOALS / STREAKS ── */
+  .roadmap-phase{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1.25rem}
+  .phase-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+  .phase-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;flex-shrink:0}
+  .phase-title{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600}
+  .phase-period{font-size:12px;color:var(--text3);margin-top:1px}
+  .milestone-list{display:flex;flex-direction:column;gap:8px}
+  .milestone{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--border)}
+  .milestone-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .milestone-text{font-size:13px;color:var(--text2);line-height:1.5}
+  .milestone-text strong{color:var(--text);font-weight:500}
+  .goal-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
+  .goal-row-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+  .goal-row-title{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600;color:var(--text)}
+  .goal-pct{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--accent)}
+  .goal-desc{font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5}
+  .goal-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:8px}
+  .goal-bar-fill{height:100%;border-radius:3px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+  .goal-slider{width:100%;accent-color:var(--accent2);cursor:pointer}
+  .day-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text3);transition:all 0.15s;user-select:none}
+  .day-cell:hover{border-color:var(--border2)}
+  .day-cell.completed{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+  .day-cell.today{border-color:var(--accent);color:var(--accent)}
+  .day-cell.today.completed{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+  .day-num{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;margin-top:2px}
+  .tip-block{border-left:3px solid var(--teal);padding:0.75rem 1rem;background:rgba(45,212,191,0.04);border-radius:0 var(--r) var(--r) 0;margin-bottom:0.75rem;font-size:14px;color:var(--text2);line-height:1.6}
+  .tip-block strong{color:var(--text)}
+  .action-btn{display:flex;width:100%;text-align:left;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text2);font-size:14px;font-family:'Satoshi',sans-serif;cursor:pointer;transition:all 0.15s;margin-bottom:8px;align-items:center;justify-content:space-between;text-decoration:none}
+  .action-btn:hover{border-color:var(--accent2);color:var(--text);background:rgba(232,213,163,0.05)}
+  .action-arrow{color:var(--accent2);font-size:16px}
+
+  @media(max-width:768px){
+    .shell{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;padding:1rem;gap:0.5rem}
+    .xp-card{margin-top:0;flex:1;min-width:140px}
+    .nav-section{flex-direction:row;flex-wrap:wrap;gap:3px}
+    .nav-label{display:none}
+    .main{padding:1rem}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .tt-summary{grid-template-columns:repeat(2,1fr)}
+    .tt-bar-label{width:110px}
+    .time-inputs{flex-direction:column}
+  }
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1.25rem}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;font-size:12px;color:var(--text2)}
+  .chart-legend span{display:flex;align-items:center;gap:5px}
+  .legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+    .date-nav{display:flex;align-items:center;gap:6px}
+  .date-nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;color:var(--text2);font-size:13px;cursor:pointer;font-family:'Satoshi',sans-serif;transition:all 0.15s}.date-nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .date-nav-btn:hover{border-color:var(--border2);color:var(--text)}
+  .today-btn{color:var(--accent2);border-color:rgba(196,169,107,0.3)}
+  .date-picker-input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;color:var(--text);font-size:13px;font-family:'Satoshi',sans-serif;outline:none;cursor:pointer}
+  .date-picker-input:focus{border-color:var(--border2)}
+  .past-banner{display:flex;justify-content:space-between;align-items:center;background:rgba(242,153,74,0.08);border:1px solid rgba(242,153,74,0.25);border-radius:var(--r2);padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:var(--amber)}
+  .past-banner-link{background:transparent;border:none;color:var(--accent2);font-size:13px;cursor:pointer;font-family:'Satoshi',sans-serif;text-decoration:underline}
+        .plan-phase{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-bottom:1.25rem}
+  .plan-phase-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:1.25rem}
+  .plan-phase-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:15px;font-weight:700;flex-shrink:0;margin-top:2px}
+  .plan-phase-info{}
+  .plan-phase-title{font-family:'Clash Display',sans-serif;font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+  .plan-phase-dates{font-size:12px;color:var(--text3);margin-top:2px}
+  .plan-phase-theme{font-size:13px;color:var(--text2);margin-top:4px;font-style:italic}
+  .plan-columns{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .plan-col{}
+  .plan-col-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px}
+  .plan-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px}
+  .plan-list li{font-size:13px;color:var(--text2);line-height:1.5;padding-left:14px;position:relative}
+  .plan-list li::before{content:"–";position:absolute;left:0;color:var(--text3)}
+  .plan-check{cursor:pointer;transition:all 0.15s;border-radius:4px;padding:3px 6px 3px 22px !important}
+  .plan-check::before{content:"☐" !important;color:var(--text3) !important;left:4px !important}
+  .plan-check:hover{background:rgba(255,255,255,0.04)}
+  .plan-check.checked{color:var(--text3) !important;text-decoration:line-through}
+  .plan-check.checked::before{content:"☑" !important;color:var(--green) !important}
+  .plan-nonneg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+  .plan-nonneg{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem;display:flex;align-items:flex-start;gap:10px}
+  .plan-nonneg-icon{font-size:20px;flex-shrink:0}
+  .plan-nonneg-text{font-size:13px;color:var(--text2);line-height:1.5}
+  @media(max-width:768px){.plan-columns{grid-template-columns:1fr}.plan-nonneg-grid{grid-template-columns:repeat(2,1fr)}}
+    .an-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+  .an-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem 1.25rem;position:relative;overflow:hidden;transition:border-color 0.2s}
+  .an-kpi:hover{border-color:var(--border2)}
+  .an-kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r2) var(--r2) 0 0}
+  .an-kpi-val{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:800;color:var(--accent);line-height:1.1;margin-top:4px}
+  .an-kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500}
+  .an-kpi-delta{font-size:12px;margin-top:4px}
+  .an-two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .an-goal-row{margin-bottom:1rem}
+  .an-goal-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .an-goal-name{font-size:13px;color:var(--text2);font-weight:500}
+  .an-goal-pct{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:700}
+  .an-goal-bar{height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+  .an-goal-fill{height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+  .hm-grid{display:grid;grid-template-columns:repeat(28,1fr);gap:3px}
+  .hm-cell{aspect-ratio:1;border-radius:3px;cursor:default;transition:transform 0.1s}
+  .hm-cell:hover{transform:scale(1.3)}
+  .hm-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3)}
+  @media(max-width:768px){.an-kpi-row{grid-template-columns:repeat(2,1fr)}.an-two-col{grid-template-columns:1fr}}
+    .quote-banner{background:linear-gradient(135deg,rgba(45,212,191,0.06) 0%,rgba(192,132,252,0.06) 100%);border:1px solid rgba(45,212,191,0.12);border-radius:var(--r2);padding:0.9rem 1.25rem;margin-bottom:1.25rem;font-size:14px;color:var(--text2);line-height:1.6;font-style:italic;display:flex;align-items:center;gap:10px}
+  .quote-banner::before{content:'"';font-family:'Clash Display',sans-serif;font-size:32px;color:var(--teal);opacity:0.5;line-height:1;flex-shrink:0;margin-top:-4px}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .page.active>*{animation:fadeUp 0.3s ease forwards}
+  .confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 1.2s ease-in forwards}
+  @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- TIME MODAL -->
+<div class="modal-overlay hidden" id="time-modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">How long did this take?</div>
+    <div class="modal-sub">Log the time you actually spent. If you skip, the task estimate will be used.</div>
+    <div class="modal-task-name" id="modal-task-name"></div>
+    <div class="time-inputs">
+      <div class="time-field">
+        <label>Hours</label>
+        <input type="number" id="modal-hours" min="0" max="23" placeholder="0" oninput="clampInput(this,0,23)">
+      </div>
+      <div class="time-field">
+        <label>Minutes</label>
+        <input type="number" id="modal-mins" min="0" max="59" placeholder="0" oninput="clampInput(this,0,59)">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-secondary" id="modal-skip-btn" onclick="closeModal(false)">Skip</button>
+      <button class="btn-primary" onclick="closeModal(true)">Save & mark done ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div><div class="logo">Mission<br><span>Control</span></div></div>
+  <div class="nav-section">
+    <div class="nav-label">Navigate</div>
+    <button class="nav-item active" onclick="showPage('today',this)"><span class="nav-icon">⚡</span> Today</button>
+    <button class="nav-item" onclick="showPage('weekly',this)"><span class="nav-icon">📋</span> Weekly Goals</button>
+    <button class="nav-item" onclick="showPage('roadmap',this)"><span class="nav-icon">🗺</span> 90-Day Roadmap</button>
+    <button class="nav-item" onclick="showPage('goals',this)"><span class="nav-icon">🎯</span> Big Goals</button>
+    <button class="nav-item" onclick="showPage('streaks',this)"><span class="nav-icon">🔥</span> Streaks</button>
+    <button class="nav-item" onclick="showPage('timetrack',this)"><span class="nav-icon">⏱</span> Time Tracker</button>
+    <button class="nav-item" onclick="showPage('social',this)"><span class="nav-icon">📵</span> Social Limit</button>
+    <button class="nav-item" onclick="showPage('analytics',this)"><span class="nav-icon">📊</span> Analytics</button>
+    <button class="nav-item" onclick="showPage('plan',this)"><span class="nav-icon">📅</span> 3-Month Plan</button>
+    <button class="nav-item" onclick="showPage('focus',this)"><span class="nav-icon">🧠</span> Focus Playbook</button>
+  </div>
+  <div class="xp-card">
+    <div class="xp-label">Total XP</div>
+    <div class="xp-val" id="sb-xp">0</div>
+    <div class="xp-sub">Level <span id="sb-level">1</span> — <span id="sb-next">200</span> XP to next</div>
+    <div class="level-bar"><div class="level-fill" id="sb-bar" style="width:0%"></div></div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- TODAY -->
+  <section id="page-today" class="page active">
+    <div class="page-header" style="margin-bottom:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="page-title" id="view-page-title">Today's Missions</div>
+          <div class="page-sub" id="today-date"></div>
+        </div>
+        <div class="date-nav">
+          <button class="date-nav-btn" onclick="shiftDay(-1)" title="Previous day">&#8592;</button>
+          <input type="date" id="date-picker" class="date-picker-input" onchange="onDatePick(this.value)">
+          <button class="date-nav-btn" onclick="shiftDay(1)" title="Next day">&#8594;</button>
+          <button class="date-nav-btn today-btn" id="goto-today-btn" onclick="goToToday()" title="Go to today" style="display:none">Today</button>
+        </div>
+      </div>
+    </div>
+    <div id="past-banner" class="past-banner" style="display:none">
+      <span id="past-banner-text"></span>
+      <button onclick="goToToday()" class="past-banner-link">Go to today →</button>
+    </div>
+    <div class="quote-banner" id="daily-quote"></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num" id="s-done">0</div><div class="stat-lbl">Tasks done</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-xp">0</div><div class="stat-lbl">XP earned</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-streak">0</div><div class="stat-lbl">Day streak 🔥</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-pct">0%</div><div class="stat-lbl">Completion</div></div>
+    </div>
+    <div id="pillars-container"></div>
+  </section>
+
+  <!-- WEEKLY -->
+  <section id="page-weekly" class="page">
+    <div class="page-header"><div class="page-title">Weekly Goals</div><div class="page-sub">Add your own tasks for the week. Reset every Monday.</div></div>
+    <div id="weeks-container"></div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="page-roadmap" class="page">
+    <div class="page-header"><div class="page-title">90-Day Roadmap</div><div class="page-sub">Your phased plan — March to June 2025</div></div>
+    <div class="roadmap-phase">
+      <div class="phase-header"><div class="phase-num" style="background:var(--red-bg);color:var(--red)">1</div><div><div class="phase-title">Stabilise & Reposition</div><div class="phase-period">Weeks 1–3 · March 17 – April 6</div></div></div>
+      <div class="milestone-list">
+        <div class="milestone"><div class="milestone-icon">🔁</div><div class="milestone-text"><strong>Reposition LinkedIn</strong> — Change headline to "IT Consultant helping Danish companies with AI integration & software modernization."</div></div>
+        <div class="milestone"><div class="milestone-icon">📵</div><div class="milestone-text"><strong>Social media limit</strong> — Set your daily budget in the Social Limit page. Log honestly every evening.</div></div>
+        <div class="milestone"><div class="milestone-icon">👥</div><div class="milestone-text"><strong>Brief your interns</strong> — One task: "Find 20 Danish companies (50-200 employees), collect: company name, LinkedIn of ops manager/CTO, website."</div></div>
+        <div class="milestone"><div class="milestone-icon">🇩🇰</div><div class="milestone-text"><strong>Restart Danish classes</strong> — This week. Not next week. Language = trust with local partners.</div></div>
+        <div class="milestone"><div class="milestone-icon">⚙️</div><div class="milestone-text"><strong>Fix Wolt schedule</strong> — Fixed hours only: e.g. Mon/Wed/Fri 5–9pm. Never let Wolt bleed into work hours.</div></div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-header"><div class="phase-num" style="background:var(--amber-bg);color:var(--amber)">2</div><div><div class="phase-title">First Client Conversations</div><div class="phase-period">Weeks 4–7 · April 7 – May 4</div></div></div>
+      <div class="milestone-list">
+        <div class="milestone"><div class="milestone-icon">📨</div><div class="milestone-text"><strong>Send 5 outreach messages per week</strong> — Target ops managers & CTOs at established Danish SMEs. Not startups.</div></div>
+        <div class="milestone"><div class="milestone-icon">🤝</div><div class="milestone-text"><strong>Attend 1 Copenhagen networking event</strong> — Meetup.com, IDA events, Tech BBQ, Copenhagen Fintech.</div></div>
+        <div class="milestone"><div class="milestone-icon">📱</div><div class="milestone-text"><strong>Smart Guide: contact 3 potential pilot partners</strong> — Museums, tour companies, city guides in Copenhagen.</div></div>
+        <div class="milestone"><div class="milestone-icon">🏆</div><div class="milestone-text"><strong>Goal: book at least 3 discovery calls</strong> — Listen more than you talk.</div></div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-header"><div class="phase-num" style="background:var(--blue-bg);color:var(--blue)">3</div><div><div class="phase-title">Close First Deal + Partner Search</div><div class="phase-period">Weeks 8–10 · May 5 – May 25</div></div></div>
+      <div class="milestone-list">
+        <div class="milestone"><div class="milestone-icon">💼</div><div class="milestone-text"><strong>Send proposals to 2+ warm leads</strong> — Small scope first. A 2-week audit or automation project.</div></div>
+        <div class="milestone"><div class="milestone-icon">🤝</div><div class="milestone-text"><strong>Actively seek Danish business partner</strong> — Post on LinkedIn. Be specific about the equity offer.</div></div>
+        <div class="milestone"><div class="milestone-icon">🚀</div><div class="milestone-text"><strong>Smart Guide pilot launched</strong> — Even with 1 user. Get real feedback.</div></div>
+        <div class="milestone"><div class="milestone-icon">💰</div><div class="milestone-text"><strong>Target: reduce Wolt to 2 days/week</strong> — Only if consultancy brings 8–10k DKK.</div></div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-header"><div class="phase-num" style="background:var(--green-bg);color:var(--green)">4</div><div><div class="phase-title">Scale & Learn</div><div class="phase-period">Weeks 11–13 · May 26 – June 15</div></div></div>
+      <div class="milestone-list">
+        <div class="milestone"><div class="milestone-icon">📈</div><div class="milestone-text"><strong>First paying client secured</strong> — Celebrate. Then systematise what got you there.</div></div>
+        <div class="milestone"><div class="milestone-icon">🧠</div><div class="milestone-text"><strong>Start AI/ML learning (100 Days of ML)</strong> — Now is the right time. Income secured, systems in place.</div></div>
+        <div class="milestone"><div class="milestone-icon">🌱</div><div class="milestone-text"><strong>Formalise Danish partner relationship</strong> — Put equity agreement in writing.</div></div>
+        <div class="milestone"><div class="milestone-icon">🔄</div><div class="milestone-text"><strong>Review & reset 90-day plan</strong> — What worked? Set the next 90-day targets.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIG GOALS -->
+  <section id="page-goals" class="page">
+    <div class="page-header"><div class="page-title">Big Goals</div><div class="page-sub">Update whenever you hit a milestone.</div></div>
+    <div id="goals-container"></div>
+  </section>
+
+  <!-- STREAKS -->
+  <section id="page-streaks" class="page">
+    <div class="page-header"><div class="page-title">Streaks & History</div><div class="page-sub">Mark each day you showed up — even 30 minutes counts.</div></div>
+    <div class="sec-div">This month</div>
+    <div id="month-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1.5rem"></div>
+    <div class="sec-div">Stats</div>
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-box"><div class="stat-num" id="streak-cur">0</div><div class="stat-lbl">Current streak</div></div>
+      <div class="stat-box"><div class="stat-num" id="streak-best">0</div><div class="stat-lbl">Best streak</div></div>
+      <div class="stat-box"><div class="stat-num" id="streak-total">0</div><div class="stat-lbl">Total days logged</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-top:1.25rem">
+      <div style="font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600;margin-bottom:0.5rem;color:var(--green)">Remember</div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.7">Missing one day is okay. Two in a row is the danger zone. Rule: if you miss a day, the very next day you do at least one task. No zero days.</div>
+    </div>
+  </section>
+
+  <!-- TIME TRACKER -->
+  <section id="page-timetrack" class="page">
+    <div class="page-header"><div class="page-title">Time Tracker</div><div class="page-sub">When you tick a task done, a popup asks how long it took. That's it — no buttons to press during work.</div></div>
+    <div class="sec-div">Today's summary</div>
+    <div class="tt-summary">
+      <div class="stat-box"><div class="stat-num" id="tt-total">0h 0m</div><div class="stat-lbl">Total logged today</div></div>
+      <div class="stat-box"><div class="stat-num" id="tt-tasks">0</div><div class="stat-lbl">Tasks with time logged</div></div>
+      <div class="stat-box"><div class="stat-num" id="tt-top">—</div><div class="stat-lbl">Most time spent on</div></div>
+    </div>
+    <div class="sec-div">Time by pillar</div>
+    <div id="tt-pillar-bars"></div>
+    <div class="sec-div">Task log</div>
+    <div id="tt-log"></div>
+  </section>
+
+  <!-- SOCIAL LIMIT -->
+  <section id="page-social" class="page">
+    <div class="page-header"><div class="page-title">Social Media Limit</div><div class="page-sub">Log how much you scrolled today. Be honest — this is just for you.</div></div>
+    <div id="sm-main"></div>
+    <div class="sec-div">Past 7 days</div>
+    <div id="sm-history"></div>
+    <div class="sec-div">Why this matters</div>
+    <div class="tip-block"><strong>You said it yourself:</strong> scrolling social media all day is your biggest productivity killer. Logging it daily makes the invisible visible.</div>
+    <div class="tip-block"><strong>The goal:</strong> Start at whatever is honest. Get it below 60 min/day in week 1. Below 30 min/day in week 2. Below 15 min/day in week 3. Every minute saved = one more outreach message you could send.</div>
+    <div class="tip-block"><strong>The rule:</strong> When you go over budget, don't beat yourself up. Just log it, see it, and do better tomorrow. Awareness is the first step.</div>
+  </section>
+
+  <!-- FOCUS -->
+  <section id="page-focus" class="page">
+    <div class="page-header"><div class="page-title">Focus Playbook</div><div class="page-sub">Your personal rules for staying on track.</div></div>
+    <div class="sec-div">Non-negotiable rules</div>
+    <div class="tip-block"><strong>Phone rule:</strong> Delete all social media apps from your phone. You will gain back 2–3 hours every single day.</div>
+    <div class="tip-block"><strong>Morning rule:</strong> No phone for the first 30 minutes after waking. Just coffee.</div>
+    <div class="tip-block"><strong>Wolt rule:</strong> Fixed hours only — e.g. Mon/Wed/Fri 5–9pm. When the shift ends, close the app.</div>
+    <div class="tip-block"><strong>Priority rule:</strong> Every morning ask: "What is the ONE thing that would move my consultancy forward today?" Do that first.</div>
+    <div class="tip-block"><strong>Interns rule:</strong> One specific measurable task per week. "Find 20 contacts" not "help with BD."</div>
+    <div class="sec-div">Your client strategy</div>
+    <div class="tip-block"><strong>Stop targeting startups.</strong> Target Danish SMEs (50–200 employees) in logistics, manufacturing, retail, healthcare.</div>
+    <div class="tip-block"><strong>Your unfair advantage:</strong> You build real products (Smart Guide). You're not just a consultant — lead with that.</div>
+    <div class="tip-block"><strong>International clients:</strong> UK and US care less about where you're from. Try LinkedIn outreach, Toptal, Contra.</div>
+    <div class="tip-block"><strong>Danish partner:</strong> Show up at events. Talk about Smart Guide. The right person will be attracted to what you're building.</div>
+    <div class="sec-div">Quick actions</div>
+    <a href="https://linkedin.com" target="_blank" class="action-btn"><span>Open LinkedIn — do your daily outreach</span><span class="action-arrow">→</span></a>
+    <a href="https://www.meetup.com/cities/dk/copenhagen/" target="_blank" class="action-btn"><span>Find Copenhagen networking events</span><span class="action-arrow">→</span></a>
+    <a href="https://www.duolingo.com" target="_blank" class="action-btn"><span>Practice Danish on Duolingo</span><span class="action-arrow">→</span></a>
+    <a href="https://www.youtube.com/playlist?list=PLKnIA16_Rmvbr7zKYQuBfsVkjoLcJgxHH" target="_blank" class="action-btn"><span>100 Days of ML — CampusX (save for Phase 4)</span><span class="action-arrow">→</span></a>
+  </section>
+
+  <!-- 3-MONTH PLAN -->
+  <section id="page-plan" class="page">
+    <div class="page-header">
+      <div class="page-title">3-Month Plan</div>
+      <div class="page-sub">Your fixed roadmap from now to June 2025. Each phase has clear goals, weekly targets, and daily non-negotiables.</div>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="plan-phase">
+      <div class="plan-phase-header">
+        <div class="plan-phase-num" style="background:var(--red-bg);color:var(--red)">1</div>
+        <div class="plan-phase-info">
+          <div class="plan-phase-title">Survival &amp; Repositioning</div>
+          <div class="plan-phase-dates">Weeks 1–3 · March 17 – April 6</div>
+          <div class="plan-phase-theme">Theme: Stop the bleeding. Get focused. Build the foundation.</div>
+        </div>
+      </div>
+      <div class="plan-columns">
+        <div class="plan-col">
+          <div class="plan-col-title">🎯 Phase goals</div>
+          <ul class="plan-list">
+            <li>Rewrite LinkedIn headline to "IT Consultant helping Danish companies automate with AI"</li>
+            <li>Delete social media apps from phone — laptop only</li>
+            <li>Fix Wolt to fixed shifts only (e.g. Mon/Wed/Fri 5–9pm)</li>
+            <li>Restart Danish classes — minimum 3 sessions this phase</li>
+            <li>Brief interns with ONE concrete weekly task: collect 20 SME contacts</li>
+            <li>Identify 10 target Danish companies (logistics, retail, manufacturing)</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">📋 Weekly targets</div>
+          <ul class="plan-list">
+            <li>5 LinkedIn outreach messages per week to SME decision-makers</li>
+            <li>1 focused hour on Smart Guide daily</li>
+            <li>30 min Danish study daily</li>
+            <li>Wolt: hit 15,000 DKK this phase to stabilise finances</li>
+            <li>No social media before 10am — every day</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">✅ End-of-phase checklist</div>
+          <ul class="plan-list">
+            <li class="plan-check" onclick="togglePlanCheck(this)">LinkedIn fully repositioned</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Social media off phone</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Wolt schedule fixed</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Danish classes restarted</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">15 outreach messages sent</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Interns briefed with clear task</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">10 target companies identified</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="plan-phase">
+      <div class="plan-phase-header">
+        <div class="plan-phase-num" style="background:var(--amber-bg);color:var(--amber)">2</div>
+        <div class="plan-phase-info">
+          <div class="plan-phase-title">First Conversations &amp; Momentum</div>
+          <div class="plan-phase-dates">Weeks 4–8 · April 7 – May 11</div>
+          <div class="plan-phase-theme">Theme: Get in rooms. Start conversations. Find your partner.</div>
+        </div>
+      </div>
+      <div class="plan-columns">
+        <div class="plan-col">
+          <div class="plan-col-title">🎯 Phase goals</div>
+          <ul class="plan-list">
+            <li>Book at least 3 discovery calls with potential consultancy clients</li>
+            <li>Attend 2 Copenhagen networking events (Meetup, IDA, Tech BBQ)</li>
+            <li>Contact 5 potential Smart Guide pilot partners (museums, tour companies)</li>
+            <li>Post once on LinkedIn about Smart Guide to build credibility</li>
+            <li>Start actively looking for a Danish business partner</li>
+            <li>Complete 2 full Danish language modules</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">📋 Weekly targets</div>
+          <ul class="plan-list">
+            <li>7 outreach messages per week (up from 5)</li>
+            <li>Follow up on every previous conversation within 3 days</li>
+            <li>1.5 hours Smart Guide daily</li>
+            <li>Danish: 30–45 min daily</li>
+            <li>Social media: under 30 min/day</li>
+            <li>Wolt: maintain 15,000–18,000 DKK/month</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">✅ End-of-phase checklist</div>
+          <ul class="plan-list">
+            <li class="plan-check" onclick="togglePlanCheck(this)">3+ discovery calls booked</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">2 networking events attended</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">5 Smart Guide pilot contacts made</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">LinkedIn post published</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Danish partner search active</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">2 Danish modules completed</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">35+ outreach messages sent total</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="plan-phase">
+      <div class="plan-phase-header">
+        <div class="plan-phase-num" style="background:var(--blue-bg);color:var(--blue)">3</div>
+        <div class="plan-phase-info">
+          <div class="plan-phase-title">Close &amp; Convert</div>
+          <div class="plan-phase-dates">Weeks 9–11 · May 12 – June 1</div>
+          <div class="plan-phase-theme">Theme: Turn conversations into contracts. Reduce Wolt.</div>
+        </div>
+      </div>
+      <div class="plan-columns">
+        <div class="plan-col">
+          <div class="plan-col-title">🎯 Phase goals</div>
+          <ul class="plan-list">
+            <li>Send at least 2 formal proposals to warm leads</li>
+            <li>Close first consultancy deal — even a small 2-week project</li>
+            <li>Launch Smart Guide pilot with at least 1 real user</li>
+            <li>Have a serious equity conversation with 1 Danish partner candidate</li>
+            <li>Reduce Wolt to 2 days/week once consultancy income starts</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">📋 Weekly targets</div>
+          <ul class="plan-list">
+            <li>Follow up every warm lead at least twice</li>
+            <li>Refine proposal template based on feedback</li>
+            <li>Smart Guide: focus only on pilot-critical features</li>
+            <li>Danish: maintain daily habit, attempt small real conversations</li>
+            <li>Social media: under 20 min/day</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">✅ End-of-phase checklist</div>
+          <ul class="plan-list">
+            <li class="plan-check" onclick="togglePlanCheck(this)">2+ proposals sent</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">First client deal closed ⭐</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Smart Guide pilot live</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Danish partner conversation had</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Wolt reduced to 2 days/week</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="plan-phase" style="border-color:rgba(111,207,151,0.3)">
+      <div class="plan-phase-header">
+        <div class="plan-phase-num" style="background:var(--green-bg);color:var(--green)">4</div>
+        <div class="plan-phase-info">
+          <div class="plan-phase-title">Scale &amp; Learn</div>
+          <div class="plan-phase-dates">Weeks 12–13 · June 2 – June 15</div>
+          <div class="plan-phase-theme">Theme: You made it. Now build the system.</div>
+        </div>
+      </div>
+      <div class="plan-columns">
+        <div class="plan-col">
+          <div class="plan-col-title">🎯 Phase goals</div>
+          <ul class="plan-list">
+            <li>Start 100 Days of Machine Learning (CampusX YouTube)</li>
+            <li>Formalise Danish partner relationship — put equity in writing</li>
+            <li>Review all 3 months — what worked, what didn't</li>
+            <li>Set next 90-day targets with a clearer pipeline</li>
+            <li>Systematise the outreach process that got you the first client</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">📋 Weekly targets</div>
+          <ul class="plan-list">
+            <li>1 hour ML learning daily</li>
+            <li>Keep consultancy pipeline moving — at least 3 active conversations</li>
+            <li>Smart Guide: collect and document pilot feedback</li>
+            <li>Danish: continue daily, consider formal exam prep</li>
+          </ul>
+        </div>
+        <div class="plan-col">
+          <div class="plan-col-title">✅ End-of-phase checklist</div>
+          <ul class="plan-list">
+            <li class="plan-check" onclick="togglePlanCheck(this)">ML learning started</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Partner agreement drafted</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">90-day review done</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Next 90-day plan set</li>
+            <li class="plan-check" onclick="togglePlanCheck(this)">Outreach system documented</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- NON-NEGOTIABLES -->
+    <div class="sec-div">Daily non-negotiables — every single day</div>
+    <div class="plan-nonneg-grid">
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">📵</div>
+        <div class="plan-nonneg-text">No social media before 10am</div>
+      </div>
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">💼</div>
+        <div class="plan-nonneg-text">1 consultancy action (message, follow-up, or research)</div>
+      </div>
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">🇩🇰</div>
+        <div class="plan-nonneg-text">30 min Danish study</div>
+      </div>
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">🚶</div>
+        <div class="plan-nonneg-text">20 min walk outside</div>
+      </div>
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">📓</div>
+        <div class="plan-nonneg-text">Log your day before bed (streak check-in)</div>
+      </div>
+      <div class="plan-nonneg">
+        <div class="plan-nonneg-icon">🚫</div>
+        <div class="plan-nonneg-text">Never do Wolt during your designated work hours</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ANALYTICS -->
+  <section id="page-analytics" class="page">
+    <div class="page-header">
+      <div class="page-title">Analytics</div>
+      <div class="page-sub">Your real numbers. No spin.</div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="an-kpi-row" id="an-kpi-row"></div>
+
+    <!-- HEATMAP -->
+    <div class="sec-div">Activity heatmap — last 4 weeks</div>
+    <div class="chart-card">
+      <div id="an-heatmap"></div>
+    </div>
+
+    <!-- COMPLETION TREND + PILLAR BREAKDOWN side by side -->
+    <div class="an-two-col">
+      <div>
+        <div class="sec-div">Completion rate — last 7 days</div>
+        <div class="chart-card" style="height:220px">
+          <div style="position:relative;width:100%;height:100%"><canvas id="chart-trend"></canvas></div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-div">Time by pillar — last 7 days</div>
+        <div class="chart-card" style="height:220px;display:flex;align-items:center;gap:1.5rem">
+          <div style="position:relative;width:130px;height:130px;flex-shrink:0"><canvas id="chart-donut"></canvas></div>
+          <div id="donut-legend" style="flex:1;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOAL PROGRESS -->
+    <div class="sec-div">Big goals progress</div>
+    <div class="chart-card" id="an-goals-card"></div>
+
+    <!-- ESTIMATED VS ACTUAL -->
+    <div class="sec-div">Estimated vs actual time — today</div>
+    <div class="chart-card">
+      <div class="chart-legend" id="leg-time"></div>
+      <div id="time-compare-wrap" style="position:relative;width:100%;height:260px"><canvas id="chart-time"></canvas></div>
+      <div id="no-time-msg" style="display:none;font-size:13px;color:var(--text3);padding:0.5rem 0">No time logged yet today. Complete a task and log how long it took.</div>
+    </div>
+
+    <!-- SOCIAL MEDIA TREND -->
+    <div class="sec-div">Social media usage — last 7 days</div>
+    <div class="chart-card">
+      <div style="position:relative;width:100%;height:160px"><canvas id="chart-sm"></canvas></div>
+    </div>
+
+  </section>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ══ STATE ══
+const DEF={totalXp:0,streak:0,bestStreak:0,lastActiveDate:null,checkedTasks:{},checkedByDate:{},weeklyTasks:[],customDailyTasks:[],goalProgress:[0,0,0,0],calendarDays:{},timeLogs:[],smLog:[],smBudgetMins:60,dailyDoneLog:{},planChecks:{},version:5};
+let S=load();
+function load(){try{const r=localStorage.getItem('mc_v4');if(r)return{...DEF,...JSON.parse(r)};}catch(e){}return{...DEF};}
+function save(){try{localStorage.setItem('mc_v4',JSON.stringify(S));}catch(e){}}
+
+// ══ PILLARS DATA ══
+const PILLARS=[
+  {id:'consult',name:'IT Consultancy & Client Hunting',color:'#e8d5a3',priority:'Priority 1',ps:'background:rgba(232,213,163,0.15);color:#e8d5a3',tasks:[
+    {id:'c1',name:'Send 1 personalised LinkedIn message to a Danish SME decision-maker (ops manager / CTO)',pts:15,time:'15 min',phase:'Daily'},
+    {id:'c2',name:'Follow up on any previous conversations — one reply can open a deal',pts:10,time:'10 min',phase:'Daily'},
+    {id:'c3',name:'Brief interns: collect 20 SME contacts (name, LinkedIn, company size)',pts:10,time:'10 min',phase:'Weekly'},
+    {id:'c4',name:'Spend 20 minutes improving your LinkedIn profile or case study',pts:15,time:'20 min',phase:'Weekly'},
+    {id:'c5',name:'Research 1 local event or community to attend this month',pts:10,time:'10 min',phase:'Weekly'},
+  ]},
+  {id:'smartguide',name:'Smart Guide Product',color:'#56a8f5',priority:'Priority 2',ps:'background:rgba(86,168,245,0.15);color:#56a8f5',tasks:[
+    {id:'s1',name:'Work on Smart Guide for 1 focused hour — one specific feature or fix only',pts:20,time:'1 hour',phase:'Daily'},
+    {id:'s2',name:'Identify 1 potential pilot partner (museum, tour company, city guide)',pts:15,time:'20 min',phase:'Weekly'},
+    {id:'s3',name:'Write a 3-bullet "problem-solution-impact" pitch for Smart Guide',pts:10,time:'15 min',phase:'One-time'},
+  ]},
+  {id:'danish',name:'Danish Language',color:'#a78bfa',priority:'Trust builder',ps:'background:rgba(167,139,250,0.15);color:#a78bfa',tasks:[
+    {id:'d1',name:'Attend or watch your Danish class lesson — restart this week',pts:15,time:'1 hour',phase:'Daily'},
+    {id:'d2',name:'Practice 10 new Danish words (Duolingo, Anki, or flashcards)',pts:10,time:'15 min',phase:'Daily'},
+  ]},
+  {id:'wolt',name:'Wolt — Survival Income',color:'#f2994a',priority:'Survival',ps:'background:rgba(242,153,74,0.15);color:#f2994a',tasks:[
+    {id:'w1',name:'Complete planned Wolt shift within your fixed scheduled hours only',pts:15,time:'fixed hrs',phase:'Scheduled'},
+    {id:'w2',name:"Log today's Wolt earnings in your finance tracker",pts:5,time:'2 min',phase:'Daily'},
+  ]},
+  {id:'mind',name:'Mind & Body',color:'#6fcf97',priority:'Foundation',ps:'background:rgba(111,207,151,0.15);color:#6fcf97',tasks:[
+    {id:'m1',name:'No social media before 10am — protect your morning brain',pts:10,time:'All morning',phase:'Daily'},
+    {id:'m2',name:'20-minute walk outside — clears the head, reduces anxiety',pts:10,time:'20 min',phase:'Daily'},
+  ]},
+];
+const BIG_GOALS=[
+  {title:'Land first IT consultancy client',desc:'Target: Danish SME or international company needing software / AI help. Aim for 10–20k DKK/month.',color:'#e8d5a3'},
+  {title:'Smart Guide — first real pilot user',desc:'One museum, tour company or city. Real feedback beats solo building. Also your proof-of-concept story.',color:'#56a8f5'},
+  {title:'Find a Danish business partner',desc:'Someone who handles client acquisition. Offer equity. Pitch: "I build, you sell — we split the upside."',color:'#a78bfa'},
+  {title:'Pass Danish language course',desc:'Restart this week. 30 min/day is enough. Danish = trust and doors opened with local partners.',color:'#6fcf97'},
+];
+
+// ══ VIEW DATE (which day are we browsing) ══
+let _viewDate = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function isViewingToday(){ return _viewDate === todayStr(); }
+
+function getCheckedForDate(date){
+  if(date === todayStr()) return S.checkedTasks;
+  return (S.checkedByDate||{})[date] || {};
+}
+
+function setCheckedForDate(date, taskId, val){
+  if(date === todayStr()){
+    S.checkedTasks[taskId] = val;
+  } else {
+    if(!S.checkedByDate) S.checkedByDate={};
+    if(!S.checkedByDate[date]) S.checkedByDate[date]={};
+    S.checkedByDate[date][taskId] = val;
+  }
+}
+
+function fmtDateLabel(dateStr){
+  const d = new Date(dateStr + 'T12:00:00');
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const today = todayStr();
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().slice(0,10);
+  if(dateStr===today) return days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+  if(dateStr===yStr) return 'Yesterday — '+d.getDate()+' '+months[d.getMonth()];
+  return days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+}
+
+function setViewDate(dateStr){
+  const today = todayStr();
+  if(dateStr > today) dateStr = today; // can't go into the future
+  _viewDate = dateStr;
+  // Update date picker
+  document.getElementById('date-picker').value = dateStr;
+  // Update header
+  document.getElementById('today-date').textContent = fmtDateLabel(dateStr);
+  document.getElementById('view-page-title').textContent = isViewingToday() ? "Today's Missions" : "Past Day";
+  // Show/hide past banner and today button
+  const banner = document.getElementById('past-banner');
+  const todayBtn = document.getElementById('goto-today-btn');
+  if(!isViewingToday()){
+    banner.style.display='flex';
+    document.getElementById('past-banner-text').textContent = 'Viewing ' + fmtDateLabel(dateStr) + ' — changes saved to that date.';
+    todayBtn.style.display='block';
+  } else {
+    banner.style.display='none';
+    todayBtn.style.display='none';
+  }
+  renderPillars();
+  updateStats();
+}
+
+function shiftDay(delta){
+  const d = new Date(_viewDate + 'T12:00:00');
+  d.setDate(d.getDate() + delta);
+  const newDate = d.toISOString().slice(0,10);
+  if(newDate <= todayStr()) setViewDate(newDate);
+}
+
+function onDatePick(val){ if(val) setViewDate(val); }
+function goToToday(){ setViewDate(todayStr()); }
+
+// ══ NAV ══
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='streaks')renderCalendar();
+  if(name==='timetrack')renderTimeTrack();
+  if(name==='social')renderSocial();
+  if(name==='analytics')renderAnalytics();
+  if(name==='plan') renderPlanChecks();
+}
+
+// ══ MODAL ══
+let _modalTaskId=null, _modalTaskName='', _modalIsCustom=false, _modalPts=0, _modalPillarId='', _modalEstMins=null;
+
+function openTimeModal(taskId,taskName,isCustom,pts,pillarId){
+  _modalTaskId=taskId; _modalTaskName=taskName; _modalIsCustom=isCustom; _modalPts=pts; _modalPillarId=pillarId;
+  // Find estimated time from predefined task list
+  const task=PILLARS.flatMap(p=>p.tasks).find(t=>t.id===taskId);
+  _modalEstMins=task?parseTodayExpectedMins(task.time):null;
+  document.getElementById('modal-task-name').textContent=taskName;
+  document.getElementById('modal-hours').value='';
+  document.getElementById('modal-mins').value='';
+  // Update Skip button label
+  const skipBtn=document.getElementById('modal-skip-btn');
+  if(_modalEstMins!==null){
+    skipBtn.textContent='Skip (use estimate: '+fmtMins(_modalEstMins)+')';
+    skipBtn.title='Will log '+fmtMins(_modalEstMins)+' based on task estimate';
+  } else {
+    skipBtn.textContent='Skip (no estimate — log 0)';
+    skipBtn.title='No estimate available, time will not be logged';
+  }
+  document.getElementById('time-modal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('modal-mins').focus(),100);
+}
+
+function closeModalOutside(e){if(e.target===document.getElementById('time-modal'))closeModal(false);}
+
+function closeModal(save_time){
+  const modal=document.getElementById('time-modal');
+  modal.classList.add('hidden');
+  let minsToLog=0;
+  if(save_time){
+    const h=parseInt(document.getElementById('modal-hours').value)||0;
+    const m=parseInt(document.getElementById('modal-mins').value)||0;
+    minsToLog=h*60+m;
+  } else {
+    // Skip — fall back to task estimate if available
+    minsToLog=_modalEstMins!==null?_modalEstMins:0;
+  }
+  if(minsToLog>0){
+    if(!S.timeLogs)S.timeLogs=[];
+    S.timeLogs.push({
+      id:'tl'+Date.now(),
+      taskId:_modalTaskId,
+      taskName:_modalTaskName,
+      pillarId:_modalPillarId,
+      date:new Date().toISOString().slice(0,10),
+      mins:minsToLog,
+      isEstimate:!save_time
+    });
+  }
+  // Mark done regardless
+  setCheckedForDate(_viewDate,_modalTaskId,true);
+  if(isViewingToday()) S.totalXp+=_modalPts;
+  save();confetti();renderPillars();updateSidebar();
+  saveDailyDoneLog();
+  if(document.getElementById('page-timetrack').classList.contains('active'))renderTimeTrack();
+  if(document.getElementById('page-analytics').classList.contains('active'))renderAnalytics();
+}
+
+function clampInput(el,mn,mx){let v=parseInt(el.value);if(isNaN(v))return;if(v<mn)el.value=mn;if(v>mx)el.value=mx;}
+
+// ══ PILLARS ══
+function getPillarId(tid){for(const p of PILLARS){if(p.tasks.find(t=>t.id===tid))return p.id;}return 'custom';}
+
+function renderPillars(){
+  const container=document.getElementById('pillars-container');
+  container.innerHTML='';
+  if(!S.customDailyTasks)S.customDailyTasks=[];
+  PILLARS.forEach(p=>{
+    const custom=S.customDailyTasks.filter(t=>t.pillar===p.id);
+    const all=[...p.tasks,...custom];
+    const _vc=getCheckedForDate(_viewDate);
+    const earned=all.filter(t=>_vc[t.id]).reduce((a,t)=>a+t.pts,0);
+    const total=all.reduce((a,t)=>a+t.pts,0);
+    const pct=total>0?Math.round(earned/total*100):0;
+    const isToday=isViewingToday();
+    const div=document.createElement('div');div.className='pillar open';div.id='pillar-'+p.id;
+    div.innerHTML=`<div class="pillar-head" onclick="togglePillar('${p.id}')"><div class="pillar-info"><div class="pillar-dot" style="background:${p.color}"></div><div class="pillar-name">${p.name}</div><span class="pillar-badge chip" style="${p.ps}">${p.priority}</span></div><div class="pillar-right"><span class="pillar-pts">${earned}/${total} pts</span><span class="pillar-chevron">▾</span></div></div><div class="pillar-progress"><div class="pillar-progress-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="pillar-body" id="body-${p.id}"></div>`;
+    container.appendChild(div);
+    const body=document.getElementById('body-'+p.id);
+    p.tasks.forEach(t=>body.appendChild(makeRow(t,false,p.id)));
+    custom.forEach(t=>body.appendChild(makeRow(t,true,p.id)));
+    const addRow=document.createElement('div');
+    addRow.style.cssText='display:flex;gap:8px;padding:10px 1.25rem;border-top:1px solid var(--border)';
+    addRow.innerHTML=`<input class="add-input" id="dinput-${p.id}" type="text" placeholder="Add a task to this pillar..." maxlength="120" style="flex:1;font-size:13px;padding:6px 10px" onkeydown="if(event.key==='Enter')addDailyTask('${p.id}')"><button class="add-btn" onclick="addDailyTask('${p.id}')" style="font-size:12px;padding:6px 12px">+ Add</button>`;
+    body.appendChild(addRow);
+  });
+  updateStats();
+}
+
+function makeRow(t,isCustom,pillarId){
+  const _vc=getCheckedForDate(_viewDate);
+  const done=!!_vc[t.id];
+  const loggedMins=getLoggedMinsForDate(t.id,_viewDate);
+  const row=document.createElement('div');row.className='task-item';
+  const meta=isCustom
+    ?`<span class="chip chip-pts">+${t.pts} XP</span><span class="chip chip-custom">Custom</span>`
+    :`<span class="chip chip-pts">+${t.pts} XP</span><span class="chip chip-phase">${t.phase}</span><span class="chip chip-time-est">${t.time}</span>`;
+  const timeChip=loggedMins>0?`<span class="chip chip-logged">⏱ ${fmtMins(loggedMins)}</span>`:'';
+  row.innerHTML=`
+    <div class="check ${done?'done':''}" onclick="onCheckClick('${t.id}','${esc(t.name)}',${isCustom},${t.pts},'${pillarId}')">${done?'✓':''}</div>
+    <div class="task-text">
+      <div class="task-name ${done?'crossed':''}">${t.name}</div>
+      <div class="task-meta">${meta}${timeChip}</div>
+    </div>
+    ${isCustom?`<button class="del-btn" onclick="deleteDailyTask('${t.id}')">×</button>`:''}`;
+  return row;
+}
+
+function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+function onCheckClick(taskId,taskName,isCustom,pts,pillarId){
+  const _vc=getCheckedForDate(_viewDate);
+  const done=!!_vc[taskId];
+  if(!done){
+    // Marking as done — open time modal
+    openTimeModal(taskId,taskName,isCustom,pts,pillarId);
+  } else {
+    // Unchecking — remove time log for this date too
+    setCheckedForDate(_viewDate,taskId,false);
+    if(isViewingToday()) S.totalXp=Math.max(0,S.totalXp-pts);
+    S.timeLogs=(S.timeLogs||[]).filter(l=>!(l.taskId===taskId&&l.date===_viewDate));
+    save();renderPillars();updateSidebar();saveDailyDoneLog();
+  }
+}
+
+function togglePillar(id){document.getElementById('pillar-'+id).classList.toggle('open');}
+
+function addDailyTask(pillarId){
+  const input=document.getElementById('dinput-'+pillarId);
+  const text=input.value.trim();if(!text)return;
+  if(!S.customDailyTasks)S.customDailyTasks=[];
+  S.customDailyTasks.push({id:'cd'+Date.now(),pillar:pillarId,name:text,pts:10,phase:'Custom',time:'-'});
+  input.value='';save();renderPillars();updateSidebar();
+}
+function deleteDailyTask(id){
+  S.customDailyTasks=S.customDailyTasks.filter(t=>t.id!==id);
+  if(S.checkedTasks[id]){S.totalXp=Math.max(0,S.totalXp-10);delete S.checkedTasks[id];}
+  save();renderPillars();updateSidebar();
+}
+
+function updateStats(){
+  const all=[...PILLARS.flatMap(p=>p.tasks),...(S.customDailyTasks||[])];
+  const _vc=getCheckedForDate(_viewDate);
+  const done=all.filter(t=>_vc[t.id]);
+  const xp=done.reduce((a,t)=>a+t.pts,0);
+  document.getElementById('s-done').textContent=done.length;
+  document.getElementById('s-xp').textContent=xp;
+  document.getElementById('s-streak').textContent=S.streak;
+  document.getElementById('s-pct').textContent=(all.length>0?Math.round(done.length/all.length*100):0)+'%';
+}
+
+// ══ TIME TRACKING ══
+function fmtMins(m){if(m<60)return m+'m';const h=Math.floor(m/60),rm=m%60;return h+'h'+(rm>0?' '+rm+'m':'');}
+function getTodayLoggedMins(taskId){return getLoggedMinsForDate(taskId,todayStr());}
+function getLoggedMinsForDate(taskId,date){return(S.timeLogs||[]).filter(l=>l.taskId===taskId&&l.date===date).reduce((a,l)=>a+l.mins,0);}
+
+function renderTimeTrack(){
+  const today=new Date().toISOString().slice(0,10);
+  const logs=(S.timeLogs||[]).filter(l=>l.date===today);
+  const totalMins=logs.reduce((a,l)=>a+l.mins,0);
+  const h=Math.floor(totalMins/60),m=totalMins%60;
+  document.getElementById('tt-total').textContent=h+'h '+m+'m';
+  document.getElementById('tt-tasks').textContent=logs.length;
+
+  // Top pillar
+  const ps={};PILLARS.forEach(p=>ps[p.id]=0);
+  logs.forEach(l=>{const pid=l.pillarId||'custom';if(!ps[pid])ps[pid]=0;ps[pid]+=l.mins;});
+  const topPid=Object.entries(ps).sort((a,b)=>b[1]-a[1])[0];
+  const topP=topPid&&topPid[1]>0?PILLARS.find(x=>x.id===topPid[0]):null;
+  const topEl=document.getElementById('tt-top');
+  topEl.textContent=topP?topP.name.split(' ')[0]+' '+topP.name.split(' ')[1]:'—';
+  topEl.style.fontSize=topP?'13px':'26px';
+
+  // Bars
+  const barsEl=document.getElementById('tt-pillar-bars');barsEl.innerHTML='';
+  const maxM=Math.max(...Object.values(ps),1);
+  let any=false;
+  PILLARS.forEach(p=>{
+    const mins=ps[p.id]||0;if(mins===0)return;any=true;
+    const pct=Math.round(mins/maxM*100);
+    const row=document.createElement('div');row.className='tt-bar-row';
+    row.innerHTML=`<div class="tt-bar-label">${p.name}</div><div class="tt-bar-outer"><div class="tt-bar-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="tt-bar-val">${fmtMins(mins)}</div>`;
+    barsEl.appendChild(row);
+  });
+  if(!any)barsEl.innerHTML='<div style="font-size:13px;color:var(--text3)">No time logged yet. Complete a task and log how long it took.</div>';
+
+  // Log
+  const logEl=document.getElementById('tt-log');logEl.innerHTML='';
+  if(logs.length===0){logEl.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0">No entries yet today. Tick a task done to log time.</div>';return;}
+  [...logs].reverse().forEach(l=>{
+    const p=PILLARS.find(x=>x.id===l.pillarId);
+    const row=document.createElement('div');row.className='tt-log-item';
+    const estBadge=l.isEstimate?'<span style="font-size:10px;color:var(--text3);background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:8px;margin-left:4px">est.</span>':'';
+    row.innerHTML=`<div class="tt-log-name">${l.taskName}</div><span class="tt-log-pillar chip" style="${p?p.ps:'background:rgba(255,255,255,0.06);color:var(--text3)'}">${p?p.name:'Custom'}</span><div class="tt-log-dur">${fmtMins(l.mins)}${estBadge}</div>`;
+    logEl.appendChild(row);
+  });
+}
+
+// ══ SOCIAL MEDIA ══
+function getTodaySmMins(){const today=new Date().toISOString().slice(0,10);const e=(S.smLog||[]).find(l=>l.date===today);return e?e.mins:null;}
+function getStatus(used,budget){if(used===null)return'none';if(used/budget>=1)return'over';if(used/budget>=0.8)return'warn';return'safe';}
+
+function renderSocial(){
+  const budget=S.smBudgetMins||60;
+  const usedToday=getTodaySmMins();
+  const status=getStatus(usedToday,budget);
+  const today=new Date().toISOString().slice(0,10);
+
+  const statusLabel={none:'Not logged yet',safe:'Under budget ✓',warn:'Getting close ⚠',over:'Over limit 🚨'}[status];
+  const badgeClass={none:'safe',safe:'safe',warn:'warn',over:'over'}[status];
+  const usedDisplay=usedToday!==null?usedToday:0;
+  const pct=Math.min(100,Math.round(usedDisplay/budget*100));
+  const remaining=Math.max(0,budget-usedDisplay);
+  const ringColor={none:'#5a5855',safe:'#6fcf97',warn:'#f2994a',over:'#eb5757'}[status];
+  const circum=2*Math.PI*38;
+  const dash=(pct/100)*circum;
+
+  document.getElementById('sm-main').innerHTML=`
+    <div class="sm-card ${badgeClass}">
+      <div class="sm-header">
+        <div class="sm-title">Today's Social Media</div>
+        <span class="sm-badge ${badgeClass}">${statusLabel}</span>
+      </div>
+      <div class="sm-ring-row">
+        <div class="sm-ring">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="9"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="${ringColor}" stroke-width="9" stroke-dasharray="${dash.toFixed(1)} ${circum.toFixed(1)}" stroke-linecap="round"/>
+          </svg>
+          <div class="sm-ring-label">
+            <div class="sm-ring-time">${usedToday!==null?fmtMins(usedDisplay):'—'}</div>
+            <div class="sm-ring-sub">${usedToday!==null?'of '+fmtMins(budget):'not logged'}</div>
+          </div>
+        </div>
+        <div class="sm-info">
+          <div class="sm-budget-row">Daily budget: <input class="sm-num-input" type="number" min="5" max="480" value="${budget}" onchange="updateSmBudget(this.value)"> min</div>
+          ${usedToday!==null?`<div style="font-size:13px;color:var(--text2);margin-top:4px">${remaining} min remaining today</div>`:''}
+        </div>
+      </div>
+      <div class="sm-log-today">
+        <div class="sm-log-label">${usedToday!==null?'Update today\'s usage:':'Log today\'s social media time:'}</div>
+        <div class="sm-log-row">
+          <input class="sm-log-input" id="sm-mins-input" type="number" min="0" max="720" placeholder="${usedToday!==null?usedDisplay:0}" value="${usedToday!==null?usedDisplay:''}">
+          <span style="font-size:13px;color:var(--text2)">minutes</span>
+          <button class="sm-save-btn" onclick="saveSmLog()">Save</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Enter your total scrolling time for today across all apps. You can update it anytime.</div>
+      </div>
+    </div>`;
+
+  // History
+  const histEl=document.getElementById('sm-history');histEl.innerHTML='';
+  const last7=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10));}
+  let anyHistory=false;
+  last7.forEach(date=>{
+    const entry=(S.smLog||[]).find(l=>l.date===date);
+    if(!entry)return;anyHistory=true;
+    const used=entry.mins,bgt=budget,s=getStatus(used,bgt);
+    const color={safe:'var(--green)',warn:'var(--amber)',over:'var(--red)',none:'var(--text3)'}[s];
+    const d=new Date(date);
+    const label=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    const row=document.createElement('div');row.className='sm-history-item';
+    row.innerHTML=`<span style="color:var(--text2)">${label}</span><span style="color:${color};font-weight:500">${fmtMins(used)}</span>`;
+    histEl.appendChild(row);
+  });
+  if(!anyHistory)histEl.innerHTML='<div style="font-size:13px;color:var(--text3)">No history yet. Start logging today.</div>';
+}
+
+function saveSmLog(){
+  const val=parseInt(document.getElementById('sm-mins-input').value);
+  if(isNaN(val)||val<0)return;
+  const today=new Date().toISOString().slice(0,10);
+  if(!S.smLog)S.smLog=[];
+  const existing=S.smLog.find(l=>l.date===today);
+  if(existing)existing.mins=val;
+  else S.smLog.push({date:today,mins:val});
+  save();renderSocial();
+  // Toast if over
+  const budget=S.smBudgetMins||60;
+  if(val>=budget)showToast('🚨 Over your social media limit today. Tomorrow is a new day.','red');
+  else if(val>=budget*0.8)showToast('⚠️ You used 80%+ of your social budget today.','amber');
+  else showToast('✓ Time logged. Well done for tracking it.','green');
+}
+
+function updateSmBudget(val){S.smBudgetMins=Math.max(5,parseInt(val)||60);save();renderSocial();}
+
+function showToast(msg,color){
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:var(--r2);background:var(--bg2);border:1px solid var(--${color});color:var(--${color});font-size:14px;z-index:9999;max-width:320px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.4)`;
+  el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+}
+
+// ══ WEEKLY ══
+function getWeekKey(){const d=new Date(),day=d.getDay()||7,m=new Date(d);m.setDate(d.getDate()-day+1);return m.toISOString().slice(0,10);}
+function renderWeekly(){
+  const wk=getWeekKey();const c=document.getElementById('weeks-container');c.innerHTML='';
+  if(!S.weeklyTasks)S.weeklyTasks=[];
+  const card=document.createElement('div');card.className='week-card';
+  const s=new Date(wk),e=new Date(wk);e.setDate(e.getDate()+6);
+  const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  card.innerHTML=`<div class="week-header"><div class="week-title">This Week's Goals</div><div class="week-num">${fmt(s)} – ${fmt(e)}</div></div><div id="weekly-tasks-list"></div><div class="add-task-row"><input class="add-input" id="weekly-input" type="text" placeholder="Add a task for this week..." maxlength="120" onkeydown="if(event.key==='Enter')addWeeklyTask()"><button class="add-btn" onclick="addWeeklyTask()">+ Add</button></div>`;
+  c.appendChild(card);renderWeeklyList(wk);
+}
+function renderWeeklyList(wk){
+  const list=document.getElementById('weekly-tasks-list');if(!list)return;if(!wk)wk=getWeekKey();
+  const tasks=S.weeklyTasks.filter(t=>t.week===wk);list.innerHTML='';
+  if(!tasks.length){list.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0">No tasks yet — add your goals above.</div>';return;}
+  tasks.forEach(t=>{
+    const row=document.createElement('div');row.className='task-item';
+    row.innerHTML=`<div class="check ${t.done?'done':''}" onclick="toggleWeeklyTask('${t.id}')">${t.done?'✓':''}</div><div class="task-text"><div class="task-name ${t.done?'crossed':''}">${t.text}</div></div><button class="del-btn" onclick="deleteWeeklyTask('${t.id}')">×</button>`;
+    list.appendChild(row);
+  });
+}
+function addWeeklyTask(){const i=document.getElementById('weekly-input');const t=i.value.trim();if(!t)return;const wk=getWeekKey();if(!S.weeklyTasks)S.weeklyTasks=[];S.weeklyTasks.push({id:'wt'+Date.now(),week:wk,text:t,done:false});i.value='';save();renderWeeklyList(wk);}
+function toggleWeeklyTask(id){const t=S.weeklyTasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;if(t.done){S.totalXp+=10;confetti();}else S.totalXp=Math.max(0,S.totalXp-10);save();renderWeeklyList(getWeekKey());updateSidebar();}
+function deleteWeeklyTask(id){S.weeklyTasks=S.weeklyTasks.filter(x=>x.id!==id);save();renderWeeklyList(getWeekKey());}
+
+// ══ BIG GOALS ══
+function renderGoals(){
+  const c=document.getElementById('goals-container');c.innerHTML='';
+  BIG_GOALS.forEach((g,i)=>{const pct=S.goalProgress[i]||0;const d=document.createElement('div');d.className='goal-row';d.innerHTML=`<div class="goal-row-header"><div class="goal-row-title">${g.title}</div><div class="goal-pct" id="gpct-${i}">${pct}%</div></div><div class="goal-desc">${g.desc}</div><div class="goal-bar"><div class="goal-bar-fill" id="gbar-${i}" style="width:${pct}%;background:${g.color}"></div></div><input type="range" class="goal-slider" min="0" max="100" value="${pct}" oninput="updateGoal(${i},this.value)">`;c.appendChild(d);});
+}
+function updateGoal(i,v){S.goalProgress[i]=parseInt(v);document.getElementById('gpct-'+i).textContent=v+'%';document.getElementById('gbar-'+i).style.width=v+'%';save();}
+
+// ══ CALENDAR ══
+function renderCalendar(){
+  const g=document.getElementById('month-grid');g.innerHTML='';
+  const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
+  const dim=new Date(yr,mo+1,0).getDate();
+  const fd=new Date(yr,mo,1).getDay();const off=fd===0?6:fd-1;
+  ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d=>{const h=document.createElement('div');h.style.cssText='text-align:center;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);padding:4px 0';h.textContent=d;g.appendChild(h);});
+  for(let i=0;i<off;i++)g.appendChild(document.createElement('div'));
+  for(let day=1;day<=dim;day++){
+    const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday=day===now.getDate();const done=!!S.calendarDays[key];
+    const cell=document.createElement('div');cell.className='day-cell'+(done?' completed':'')+(isToday?' today':'');
+    cell.innerHTML=`<span class="day-num">${day}</span>`;
+    cell.onclick=()=>{S.calendarDays[key]=!S.calendarDays[key];recalcStreak();save();renderCalendar();updateStats();};
+    g.appendChild(cell);
+  }
+  const total=Object.values(S.calendarDays).filter(Boolean).length;
+  document.getElementById('streak-cur').textContent=S.streak;
+  document.getElementById('streak-best').textContent=S.bestStreak;
+  document.getElementById('streak-total').textContent=total;
+}
+function recalcStreak(){
+  const keys=Object.entries(S.calendarDays).filter(([,v])=>v).map(([k])=>k).sort();
+  if(!keys.length){S.streak=0;return;}
+  let streak=1,cur=1;
+  for(let i=1;i<keys.length;i++){const diff=(new Date(keys[i])-new Date(keys[i-1]))/86400000;if(diff===1){cur++;streak=Math.max(streak,cur);}else cur=1;}
+  S.streak=cur;S.bestStreak=Math.max(S.bestStreak,streak);
+}
+
+// ══ SIDEBAR ══
+function updateSidebar(){
+  const lvl=Math.floor(S.totalXp/200)+1,xpIn=S.totalXp%200;
+  document.getElementById('sb-xp').textContent=S.totalXp;
+  document.getElementById('sb-level').textContent=lvl;
+  document.getElementById('sb-next').textContent=200-xpIn;
+  document.getElementById('sb-bar').style.width=Math.round(xpIn/200*100)+'%';
+}
+
+// ══ ANALYTICS ══
+let _chartInstances={};
+function destroyChart(id){if(_chartInstances[id]){_chartInstances[id].destroy();delete _chartInstances[id];}}
+
+function parseTodayExpectedMins(timeStr){
+  if(!timeStr||timeStr==='-'||timeStr==='fixed hrs'||timeStr==='All morning')return null;
+  const s=timeStr.toLowerCase();
+  if(s.includes('hour')){const m=s.match(/([\d.]+)/);return m?Math.round(parseFloat(m[1])*60):null;}
+  if(s.includes('min')){const m=s.match(/(\d+)/);return m?parseInt(m[1]):null;}
+  return null;
+}
+
+function renderAnalytics(){
+  const today=todayStr();
+  const weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-6);
+  const cutoff=weekAgo.toISOString().slice(0,10);
+  const allPredefined=PILLARS.flatMap(p=>p.tasks);
+
+  // ── KPI Cards ──
+  const kpiEl=document.getElementById('an-kpi-row');
+  if(kpiEl){
+    const todayVc=getCheckedForDate(today);
+    const todayDone=allPredefined.filter(t=>todayVc[t.id]).length;
+    const todayPct=Math.round(todayDone/allPredefined.length*100);
+    const weekLogs=(S.timeLogs||[]).filter(l=>l.date>=cutoff);
+    const totalMins=weekLogs.reduce((a,l)=>a+l.mins,0);
+    const avgGoalPct=Math.round((S.goalProgress||[]).reduce((a,v)=>a+v,0)/4);
+    const smToday=(S.smLog||[]).find(l=>l.date===today);
+    const smBudget=S.smBudgetMins||60;
+    const smUsed=smToday?smToday.mins:null;
+
+    const kpis=[
+      {label:"Today's completion",val:todayPct+'%',accent:'#4ade80',delta:todayDone+'/'+allPredefined.length+' tasks'},
+      {label:'Time logged this week',val:fmtMins(totalMins),accent:'#60a5fa',delta:weekLogs.length+' sessions'},
+      {label:'Overall goal progress',val:avgGoalPct+'%',accent:'#f5c842',delta:'Avg across 4 goals'},
+      {label:"Social media today",val:smUsed!==null?fmtMins(smUsed):'—',accent:smUsed!==null&&smUsed>smBudget?'#f87171':'#fb923c',delta:smUsed!==null?(smUsed>smBudget?'Over budget':'Under budget'):'Not logged yet'},
+    ];
+    kpiEl.innerHTML=kpis.map(k=>`
+      <div class="an-kpi">
+        <div class="an-kpi-accent" style="background:${k.accent}"></div>
+        <div class="an-kpi-label">${k.label}</div>
+        <div class="an-kpi-val" style="color:${k.accent}">${k.val}</div>
+        <div class="an-kpi-delta" style="color:var(--text3)">${k.delta}</div>
+      </div>`).join('');
+  }
+
+  // ── Activity Heatmap (28 days) ──
+  const hmEl=document.getElementById('an-heatmap');
+  if(hmEl){
+    const cells=[];
+    const dates=[];
+    for(let i=27;i>=0;i--){
+      const d=new Date();d.setDate(d.getDate()-i);
+      const key=d.toISOString().slice(0,10);
+      dates.push(key);
+      const vc=key===today?S.checkedTasks:((S.checkedByDate||{})[key]||{});
+      const done=allPredefined.filter(t=>vc[t.id]).length;
+      const pct=allPredefined.length>0?done/allPredefined.length:0;
+      let bg,title;
+      if(pct===0){bg='rgba(255,255,255,0.04)';title='No tasks done';}
+      else if(pct<0.33){bg='rgba(245,200,66,0.2)';title=Math.round(pct*100)+'% done';}
+      else if(pct<0.66){bg='rgba(245,200,66,0.5)';title=Math.round(pct*100)+'% done';}
+      else if(pct<1){bg='rgba(245,200,66,0.75)';title=Math.round(pct*100)+'% done';}
+      else{bg='#f5c842';title='Full day! 💪';}
+      cells.push(`<div class="hm-cell" style="background:${bg}" title="${d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}: ${title}"></div>`);
+    }
+    const oldest=new Date();oldest.setDate(oldest.getDate()-27);
+    hmEl.innerHTML=`<div class="hm-grid">${cells.join('')}</div>
+      <div class="hm-labels">
+        <span>${oldest.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>
+        <span>darker = more done</span>
+        <span>Today</span>
+      </div>`;
+  }
+
+  // ── Completion Trend line ──
+  destroyChart('trend');
+  const trendLabels=[],trendData=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toISOString().slice(0,10);
+    trendLabels.push(d.toLocaleDateString('en-GB',{weekday:'short'}));
+    const vc=key===today?S.checkedTasks:((S.checkedByDate||{})[key]||{});
+    const done=allPredefined.filter(t=>vc[t.id]).length;
+    trendData.push(Math.round(done/allPredefined.length*100));
+  }
+  const ctx1=document.getElementById('chart-trend');
+  if(ctx1){
+    _chartInstances['trend']=new Chart(ctx1.getContext('2d'),{
+      type:'line',
+      data:{labels:trendLabels,datasets:[{
+        label:'Completion %',data:trendData,
+        borderColor:'#f5c842',backgroundColor:'rgba(245,200,66,0.08)',
+        pointBackgroundColor:'#f5c842',pointRadius:4,pointHoverRadius:6,
+        fill:true,tension:0.4,borderWidth:2
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y}% completed`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#505870',font:{size:11}}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#505870',font:{size:11},callback:v=>v+'%'}}}}
+    });
+  }
+
+  // ── Pillar Donut ──
+  destroyChart('donut');
+  const pMins={};PILLARS.forEach(p=>pMins[p.id]=0);
+  (S.timeLogs||[]).filter(l=>l.date>=cutoff).forEach(l=>{if(pMins[l.pillarId]!==undefined)pMins[l.pillarId]+=l.mins;});
+  const ctx2=document.getElementById('chart-donut');
+  if(ctx2){
+    _chartInstances['donut']=new Chart(ctx2.getContext('2d'),{
+      type:'doughnut',
+      data:{labels:PILLARS.map(p=>p.name),datasets:[{data:PILLARS.map(p=>pMins[p.id]||0),backgroundColor:PILLARS.map(p=>p.color),borderWidth:2,borderColor:'#161b27',hoverOffset:4}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmtMins(ctx.parsed)}`}}}}
+    });
+    const legEl=document.getElementById('donut-legend');
+    if(legEl){
+      legEl.innerHTML=PILLARS.map(p=>{
+        const mins=pMins[p.id]||0;
+        return `<div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:2px;background:${p.color};flex-shrink:0"></span><span style="font-size:12px;color:var(--text2)">${p.name.split(' ')[0]} <span style="color:var(--text3)">${fmtMins(mins)}</span></span></div>`;
+      }).join('');
+    }
+  }
+
+  // ── Goal Progress bars ──
+  const goalsCard=document.getElementById('an-goals-card');
+  if(goalsCard){
+    const goalColors=['#f5c842','#60a5fa','#c084fc','#4ade80'];
+    goalsCard.innerHTML=BIG_GOALS.map((g,i)=>{
+      const pct=S.goalProgress[i]||0;
+      const statusColor=pct<25?'#f87171':pct<60?'#fb923c':pct<90?'#f5c842':'#4ade80';
+      return `<div class="an-goal-row">
+        <div class="an-goal-header">
+          <div class="an-goal-name">${g.title}</div>
+          <div class="an-goal-pct" style="color:${statusColor}">${pct}%</div>
+        </div>
+        <div class="an-goal-bar">
+          <div class="an-goal-fill" style="width:${pct}%;background:linear-gradient(90deg,${goalColors[i]}88,${goalColors[i]})"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Estimated vs Actual ──
+  destroyChart('time');
+  const todayLogs=(S.timeLogs||[]).filter(l=>l.date===today);
+  const noMsg=document.getElementById('no-time-msg');
+  const timeWrap=document.getElementById('time-compare-wrap');
+  if(todayLogs.length===0){
+    if(noMsg)noMsg.style.display='block';
+    if(timeWrap)timeWrap.style.display='none';
+    document.getElementById('leg-time').innerHTML='';
+  }else{
+    if(noMsg)noMsg.style.display='none';
+    if(timeWrap)timeWrap.style.display='block';
+    const tlabels=[],estData=[],actData=[];
+    todayLogs.forEach(l=>{
+      const task=allPredefined.find(t=>t.id===l.taskId);
+      const est=task?parseTodayExpectedMins(task.time):null;
+      tlabels.push(l.taskName.length>22?l.taskName.slice(0,22)+'…':l.taskName);
+      estData.push(est);actData.push(l.mins);
+    });
+    if(timeWrap)timeWrap.style.height=Math.max(180,todayLogs.length*52+60)+'px';
+    const ctx3=document.getElementById('chart-time');
+    if(ctx3){
+      _chartInstances['time']=new Chart(ctx3.getContext('2d'),{
+        type:'bar',
+        data:{labels:tlabels,datasets:[
+          {label:'Estimated',data:estData,backgroundColor:'rgba(80,88,112,0.5)',borderRadius:4,borderSkipped:false,categoryPercentage:0.7,barPercentage:0.5},
+          {label:'Actual',data:actData,backgroundColor:'#60a5fa',borderRadius:4,borderSkipped:false,categoryPercentage:0.7,barPercentage:0.5},
+        ]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed.x;return v===null?' No estimate':` ${ctx.dataset.label}: ${fmtMins(v)}`;},afterLabel:ctx=>{if(ctx.datasetIndex===1){const est=ctx.chart.data.datasets[0].data[ctx.dataIndex];const act=ctx.parsed.x;if(est===null)return' (no estimate)';const diff=act-est;return diff>0?` +${diff}m over`:`${Math.abs(diff)}m under`;}return'';},}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#505870',font:{size:11},callback:v=>fmtMins(v)},beginAtZero:true},y:{grid:{display:false},ticks:{color:'#9ba3b2',font:{size:12}}}}}
+      });
+      document.getElementById('leg-time').innerHTML=`<span><span class="legend-dot" style="background:rgba(80,88,112,0.7)"></span>Estimated</span><span><span class="legend-dot" style="background:#60a5fa"></span>Actual</span>`;
+    }
+  }
+
+  // ── Social media bar chart ──
+  destroyChart('sm');
+  const smLabels=[],smData=[],smColors=[];
+  const smBgt=S.smBudgetMins||60;
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toISOString().slice(0,10);
+    smLabels.push(d.toLocaleDateString('en-GB',{weekday:'short'}));
+    const entry=(S.smLog||[]).find(l=>l.date===key);
+    const mins=entry?entry.mins:0;
+    smData.push(mins);
+    smColors.push(mins===0?'rgba(255,255,255,0.06)':mins>smBgt?'#f87171':mins>smBgt*0.8?'#fb923c':'#4ade80');
+  }
+  const ctx4=document.getElementById('chart-sm');
+  if(ctx4){
+    _chartInstances['sm']=new Chart(ctx4.getContext('2d'),{
+      type:'bar',
+      data:{labels:smLabels,datasets:[
+        {label:'Budget',data:Array(7).fill(smBgt),type:'line',borderColor:'rgba(245,200,66,0.4)',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false},
+        {label:'Used',data:smData,backgroundColor:smColors,borderRadius:6,borderSkipped:false},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMins(ctx.parsed.y)}`}}},scales:{x:{grid:{display:false},ticks:{color:'#505870',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#505870',font:{size:11},callback:v=>fmtMins(v)},beginAtZero:true}}}
+    });
+  }
+}
+
+
+function saveDailyDoneLog(){
+  const _vc=getCheckedForDate(_viewDate);
+  const done=PILLARS.flatMap(p=>p.tasks).filter(t=>_vc[t.id]).length;
+  if(!S.dailyDoneLog)S.dailyDoneLog={};
+  S.dailyDoneLog[_viewDate]=done;
+  save();
+}
+
+// ══ CONFETTI ══
+const CC=['#e8d5a3','#6fcf97','#56a8f5','#a78bfa','#f2994a','#eb5757'];
+function confetti(){for(let i=0;i<14;i++){const el=document.createElement('div');el.className='confetti-piece';el.style.left=(15+Math.random()*70)+'vw';el.style.top='15vh';el.style.background=CC[Math.floor(Math.random()*CC.length)];el.style.animationDelay=(Math.random()*0.4)+'s';el.style.transform=`rotate(${Math.random()*360}deg)`;document.body.appendChild(el);setTimeout(()=>el.remove(),1500);}}
+
+// ══ DAILY RESET ══
+function checkDailyReset(){
+  const today=todayStr();
+  if(S.lastActiveDate && S.lastActiveDate!==today){
+    // Archive yesterday's checkedTasks before clearing
+    if(!S.checkedByDate) S.checkedByDate={};
+    S.checkedByDate[S.lastActiveDate]={...S.checkedTasks};
+    // Save yesterday's done count
+    if(!S.dailyDoneLog) S.dailyDoneLog={};
+    S.dailyDoneLog[S.lastActiveDate]=PILLARS.flatMap(p=>p.tasks).filter(t=>S.checkedTasks[t.id]).length;
+    S.checkedTasks={};
+    S.lastActiveDate=today;
+    save();
+  } else if(!S.lastActiveDate){
+    S.lastActiveDate=today;
+    save();
+  }
+  if(!S.checkedByDate) S.checkedByDate={};
+  if(!S.customDailyTasks) S.customDailyTasks=[];
+  if(!S.timeLogs) S.timeLogs=[];
+  if(!S.smLog) S.smLog=[];
+}
+
+
+// ══ AI COACH ══
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function togglePlanCheck(el){
+  el.classList.toggle('checked');
+  savePlanChecks();
+}
+
+function savePlanChecks(){
+  const checks={};
+  document.querySelectorAll('.plan-check').forEach((el,i)=>{
+    checks[i]=el.classList.contains('checked');
+  });
+  S.planChecks=checks;
+  save();
+}
+
+function renderPlanChecks(){
+  if(!S.planChecks) return;
+  document.querySelectorAll('.plan-check').forEach((el,i)=>{
+    if(S.planChecks[i]) el.classList.add('checked');
+    else el.classList.remove('checked');
+  });
+}
+
+
+const QUOTES = ['The gap between where you are and where you want to be is called work.', 'You are not behind. You are exactly where your effort has placed you.', 'Every expert was once a beginner who refused to quit.', 'Your runway is short. Your potential is not. Move.', 'One Danish outreach message today beats ten planned tomorrow.', 'Wolt pays the bills. Consistency builds the future.', 'The founder who shows up daily beats the one who works in bursts.', 'You moved countries, registered a company, and started building. You are already in the top 1%.', 'Discomfort is the price of entry for every good thing.', "Small daily actions compound. Start today's streak right now.", 'The market does not care about your limiting beliefs. Ship anyway.', 'One client is all it takes to change everything. Find them.', 'Learning Danish is not a distraction. It is your competitive edge.', 'Your interns can only be as effective as your instructions. Lead them.', 'Progress is not always visible. Keep going anyway.'];
+function renderDailyQuote(){
+  const el = document.getElementById('daily-quote');
+  if(!el) return;
+  const idx = new Date().getDate() % QUOTES.length;
+  el.innerHTML = QUOTES[idx] + '<span style="margin-left:auto;font-size:11px;color:var(--text3);font-style:normal;white-space:nowrap;flex-shrink:0">Daily reminder</span>';
+}
+
+// ══ INIT ══
+function init(){
+  checkDailyReset();
+  _viewDate = todayStr();
+  const picker = document.getElementById('date-picker');
+  picker.value = _viewDate;
+  picker.max = _viewDate; // can't pick future dates
+  setViewDate(_viewDate);
+  renderWeekly();renderGoals();updateSidebar();setTimeout(renderPlanChecks,100);renderDailyQuote();
+}
+init();
+</script>
+</body>
+</html>

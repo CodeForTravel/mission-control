@@ -9,7 +9,7 @@
 <style>
   :root{
     --bg:#080b12;--bg2:#0e1320;--bg3:#141c2e;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
     --text:#eef0f6;--text2:#8892a4;--text3:#424e65;
     --accent:#f5c842;--accent2:#e0a820;--accent3:#ffd96a;
     --green:#4ade80;--green-bg:rgba(74,222,128,0.1);
@@ -20,9 +20,8 @@
     --teal:#2dd4bf;--teal-bg:rgba(45,212,191,0.1);
     --r:10px;--r2:16px;
     --glow:0 0 32px rgba(245,200,66,0.15);
-    --aurora1:rgba(45,212,191,0.06);
-    --aurora2:rgba(192,132,252,0.05);
-    --aurora3:rgba(245,200,66,0.04);
+    --shadow:0 2px 8px rgba(0,0,0,0.3);
+    --shadow-lg:0 8px 24px rgba(0,0,0,0.4);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -32,10 +31,9 @@
     font-family:'Satoshi',sans-serif;
     font-size:15px;line-height:1.6;min-height:100vh;
     background-image:
-      radial-gradient(ellipse 80% 50% at 10% 0%,var(--aurora1) 0%,transparent 60%),
-      radial-gradient(ellipse 60% 40% at 90% 10%,var(--aurora2) 0%,transparent 60%),
-      radial-gradient(ellipse 50% 60% at 50% 100%,var(--aurora3) 0%,transparent 60%),
-      radial-gradient(ellipse 40% 30% at 80% 60%,rgba(45,212,191,0.03) 0%,transparent 50%);
+      radial-gradient(ellipse 80% 50% at 10% 0%,rgba(45,212,191,0.06) 0%,transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%,rgba(192,132,252,0.05) 0%,transparent 60%),
+      radial-gradient(ellipse 50% 60% at 50% 100%,rgba(245,200,66,0.04) 0%,transparent 60%);
   }
   .shell{display:flex;min-height:100vh}
   .sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:2rem 1.25rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:1.5rem;box-shadow:4px 0 32px rgba(0,0,0,0.4);background-image:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(45,212,191,0.04) 0%,transparent 70%)}
@@ -70,7 +68,7 @@
   .pillar-head:hover{background:rgba(255,255,255,0.02)}
   .pillar-info{display:flex;align-items:center;gap:10px}
   .pillar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-  .pillar-name{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;letter-spacing:-0.01em}
+  .pillar-name{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;letter-spacing:-0.01em;color:var(--text)}
   .pillar-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
   .pillar-right{display:flex;align-items:center;gap:12px}
   .pillar-pts{font-size:12px;color:var(--text3)}
@@ -85,7 +83,7 @@
   .task-item:hover{background:rgba(255,255,255,0.02)}
   .check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-size:12px;color:transparent}
   .check:hover{border-color:var(--accent2);background:rgba(232,213,163,0.05)}
-  .check.done{background:var(--green);border-color:var(--green);color:#0a1a10}
+  .check.done{background:var(--accent);border-color:var(--accent);color:#1a1200}
   .task-text{flex:1;min-width:0}
   .task-name{font-size:14px;color:var(--text);line-height:1.4}
   .task-name.crossed{text-decoration:line-through;color:var(--text3)}
@@ -96,6 +94,7 @@
   .chip-time-est{background:var(--amber-bg);color:var(--amber)}
   .chip-custom{background:rgba(255,255,255,0.06);color:var(--text3)}
   .chip-logged{background:rgba(86,168,245,0.12);color:var(--blue)}
+  .task-note{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5;padding:5px 8px;background:rgba(124,58,237,0.04);border-radius:6px;border-left:2px solid rgba(124,58,237,0.2)}
 
   /* ── MODAL ── */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
@@ -124,7 +123,7 @@
   .week-title{font-family:'Clash Display',sans-serif;font-size:16px;font-weight:700}
   .week-num{font-size:12px;color:var(--text3)}
   .add-task-row{display:flex;gap:8px;margin-top:1rem}
-  .add-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;color:var(--text);font-size:14px;font-family:'Satoshi',sans-serif;outline:none}
+  .add-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;color:var(--text);font-size:14px;font-family:'Satoshi',sans-serif;outline:none;transition:border-color 0.15s}
   .add-input:focus{border-color:var(--border2)}
   .add-input::placeholder{color:var(--text3)}
   .add-btn{background:var(--accent);color:#1a1200;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:500;font-family:'Satoshi',sans-serif;cursor:pointer;white-space:nowrap}
@@ -192,16 +191,16 @@
   .goal-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:8px}
   .goal-bar-fill{height:100%;border-radius:3px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
   .goal-slider{width:100%;accent-color:var(--accent2);cursor:pointer}
-  .day-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text3);transition:all 0.15s;user-select:none}
+  .day-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text3);transition:all 0.15s;user-select:none;font-weight:500}
   .day-cell:hover{border-color:var(--border2)}
-  .day-cell.completed{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-  .day-cell.today{border-color:var(--accent);color:var(--accent)}
+  .day-cell.completed{background:rgba(5,150,105,0.1);border-color:var(--green);color:var(--green)}
+  .day-cell.today{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 2px rgba(124,58,237,0.15)}
   .day-cell.today.completed{background:var(--green-bg);border-color:var(--green);color:var(--green)}
   .day-num{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;margin-top:2px}
-  .tip-block{border-left:3px solid var(--teal);padding:0.75rem 1rem;background:rgba(45,212,191,0.04);border-radius:0 var(--r) var(--r) 0;margin-bottom:0.75rem;font-size:14px;color:var(--text2);line-height:1.6}
+  .tip-block{border-left:3px solid var(--accent);padding:0.75rem 1rem;background:rgba(245,200,66,0.04);border-radius:0 var(--r) var(--r) 0;margin-bottom:0.75rem;font-size:14px;color:var(--text2);line-height:1.6}
   .tip-block strong{color:var(--text)}
   .action-btn{display:flex;width:100%;text-align:left;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text2);font-size:14px;font-family:'Satoshi',sans-serif;cursor:pointer;transition:all 0.15s;margin-bottom:8px;align-items:center;justify-content:space-between;text-decoration:none}
-  .action-btn:hover{border-color:var(--accent2);color:var(--text);background:rgba(232,213,163,0.05)}
+  .action-btn:hover{border-color:var(--accent2);color:var(--text);background:rgba(245,200,66,0.04)}
   .action-arrow{color:var(--accent2);font-size:16px}
 
   @media(max-width:768px){
@@ -270,8 +269,22 @@
   .hm-cell:hover{transform:scale(1.3)}
   .hm-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3)}
   @media(max-width:768px){.an-kpi-row{grid-template-columns:repeat(2,1fr)}.an-two-col{grid-template-columns:1fr}}
-    .quote-banner{background:linear-gradient(135deg,rgba(45,212,191,0.06) 0%,rgba(192,132,252,0.06) 100%);border:1px solid rgba(45,212,191,0.12);border-radius:var(--r2);padding:0.9rem 1.25rem;margin-bottom:1.25rem;font-size:14px;color:var(--text2);line-height:1.6;font-style:italic;display:flex;align-items:center;gap:10px}
-  .quote-banner::before{content:'"';font-family:'Clash Display',sans-serif;font-size:32px;color:var(--teal);opacity:0.5;line-height:1;flex-shrink:0;margin-top:-4px}
+    .quote-banner{background:linear-gradient(135deg,rgba(45,212,191,0.08) 0%,rgba(245,200,66,0.06) 100%);border:1px solid rgba(45,212,191,0.15);border-radius:var(--r2);padding:1rem 1.35rem;margin-bottom:1.5rem;font-size:14px;color:var(--text2);line-height:1.7;font-style:italic;display:flex;align-items:flex-start;gap:12px}
+  .quote-banner::before{content:'"';font-family:'Clash Display',sans-serif;font-size:36px;color:var(--teal);opacity:0.6;line-height:1;flex-shrink:0;margin-top:-2px}
+    .fin-progress-wrap{margin-bottom:1.5rem}
+  .fin-progress-bar{height:12px;background:rgba(124,58,237,0.08);border-radius:6px;overflow:hidden;border:1px solid rgba(124,58,237,0.12)}
+  .fin-progress-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#2563eb);border-radius:6px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+  .fin-log-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
+  .fin-log-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .fin-field{display:flex;flex-direction:column;gap:5px}
+  .fin-field label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em}
+  .fin-entry{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border);font-size:13px;gap:8px}
+  .fin-entry-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .fin-entry-source{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;flex-shrink:0}
+  .fin-entry-note{color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fin-entry-date{font-size:11px;color:var(--text3);flex-shrink:0}
+  .fin-entry-amount{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:700;color:var(--green);flex-shrink:0}
+  @media(max-width:768px){.fin-log-row{flex-direction:column}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .page.active>*{animation:fadeUp 0.3s ease forwards}
   .confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 1.2s ease-in forwards}
@@ -314,6 +327,7 @@
     <button class="nav-item" onclick="showPage('roadmap',this)"><span class="nav-icon">🗺</span> 90-Day Roadmap</button>
     <button class="nav-item" onclick="showPage('goals',this)"><span class="nav-icon">🎯</span> Big Goals</button>
     <button class="nav-item" onclick="showPage('streaks',this)"><span class="nav-icon">🔥</span> Streaks</button>
+    <button class="nav-item" onclick="showPage('finance',this)"><span class="nav-icon">💰</span> Finance Tracker</button>
     <button class="nav-item" onclick="showPage('timetrack',this)"><span class="nav-icon">⏱</span> Time Tracker</button>
     <button class="nav-item" onclick="showPage('social',this)"><span class="nav-icon">📵</span> Social Limit</button>
     <button class="nav-item" onclick="showPage('analytics',this)"><span class="nav-icon">📊</span> Analytics</button>
@@ -699,6 +713,73 @@
 
   </section>
 
+  <!-- FINANCE TRACKER -->
+  <section id="page-finance" class="page">
+    <div class="page-header">
+      <div class="page-title">Finance Tracker</div>
+      <div class="page-sub">Track your Wolt earnings, consultancy income, and monthly targets.</div>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-box"><div class="stat-num" id="fin-month-total">0</div><div class="stat-lbl">DKK this month</div></div>
+      <div class="stat-box"><div class="stat-num" id="fin-month-target">20,000</div><div class="stat-lbl">Monthly target (DKK)</div></div>
+      <div class="stat-box"><div class="stat-num" id="fin-month-pct">0%</div><div class="stat-lbl">Of target reached</div></div>
+    </div>
+
+    <div class="fin-progress-wrap">
+      <div class="fin-progress-bar">
+        <div class="fin-progress-fill" id="fin-progress-fill" style="width:0%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-top:4px">
+        <span>0 DKK</span>
+        <span id="fin-target-label">Target: 20,000 DKK</span>
+      </div>
+    </div>
+
+    <div class="sec-div">Log a shift or payment</div>
+    <div class="fin-log-card">
+      <div class="fin-log-row">
+        <div class="fin-field">
+          <label>Date</label>
+          <input type="date" id="fin-date" class="add-input" style="font-size:13px">
+        </div>
+        <div class="fin-field">
+          <label>Source</label>
+          <select id="fin-source" class="add-input" style="font-size:13px">
+            <option value="wolt">Wolt delivery</option>
+            <option value="consult">Consultancy</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="fin-field">
+          <label>Amount (DKK)</label>
+          <input type="number" id="fin-amount" class="add-input" placeholder="0" style="font-size:13px;max-width:120px">
+        </div>
+        <div class="fin-field">
+          <label>Note (optional)</label>
+          <input type="text" id="fin-note" class="add-input" placeholder="e.g. Friday evening shift" style="font-size:13px" maxlength="60">
+        </div>
+        <button class="add-btn" onclick="addFinanceEntry()" style="align-self:flex-end">+ Log</button>
+      </div>
+    </div>
+
+    <div class="sec-div">Monthly target</div>
+    <div class="fin-log-card" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:14px;color:var(--text2)">Monthly income target:</span>
+      <input type="number" id="fin-target-input" class="add-input" style="width:120px;font-size:14px" placeholder="20000">
+      <button class="add-btn" onclick="saveFinanceTarget()">Save</button>
+      <span style="font-size:12px;color:var(--text3)">At 150 DKK/hr peak you need ~133 hrs/month for 20k DKK</span>
+    </div>
+
+    <div class="sec-div">This month's entries</div>
+    <div id="fin-entries-list"></div>
+
+    <div class="sec-div">Monthly summary — last 6 months</div>
+    <div class="chart-card">
+      <div style="position:relative;width:100%;height:200px"><canvas id="chart-finance"></canvas></div>
+    </div>
+  </section>
+
   <!-- ANALYTICS -->
   <section id="page-analytics" class="page">
     <div class="page-header">
@@ -758,42 +839,114 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ══ STATE ══
-const DEF={totalXp:0,streak:0,bestStreak:0,lastActiveDate:null,checkedTasks:{},checkedByDate:{},weeklyTasks:[],customDailyTasks:[],goalProgress:[0,0,0,0],calendarDays:{},timeLogs:[],smLog:[],smBudgetMins:60,dailyDoneLog:{},planChecks:{},version:5};
+const DEF={totalXp:0,streak:0,bestStreak:0,lastActiveDate:null,checkedTasks:{},checkedByDate:{},weeklyTasks:[],customDailyTasks:[],goalProgress:[0,0,0,0],calendarDays:{},timeLogs:[],smLog:[],smBudgetMins:60,dailyDoneLog:{},planChecks:{},financeEntries:[],financeTarget:20000,version:5};
 let S=load();
 function load(){try{const r=localStorage.getItem('mc_v4');if(r)return{...DEF,...JSON.parse(r)};}catch(e){}return{...DEF};}
 function save(){try{localStorage.setItem('mc_v4',JSON.stringify(S));}catch(e){}}
 
 // ══ PILLARS DATA ══
+// ── TASK SCHEDULE LOGIC ──
+// dow: array of day numbers shown. 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat. null=every day.
+function isTaskActiveOnDate(task, dateStr){
+  if(!task.dow) return true;
+  const d = new Date(dateStr + 'T12:00:00');
+  return task.dow.includes(d.getDay());
+}
+
 const PILLARS=[
-  {id:'consult',name:'IT Consultancy & Client Hunting',color:'#e8d5a3',priority:'Priority 1',ps:'background:rgba(232,213,163,0.15);color:#e8d5a3',tasks:[
-    {id:'c1',name:'Send 1 personalised LinkedIn message to a Danish SME decision-maker (ops manager / CTO)',pts:15,time:'15 min',phase:'Daily'},
-    {id:'c2',name:'Follow up on any previous conversations — one reply can open a deal',pts:10,time:'10 min',phase:'Daily'},
-    {id:'c3',name:'Brief interns: collect 20 SME contacts (name, LinkedIn, company size)',pts:10,time:'10 min',phase:'Weekly'},
-    {id:'c4',name:'Spend 20 minutes improving your LinkedIn profile or case study',pts:15,time:'20 min',phase:'Weekly'},
-    {id:'c5',name:'Research 1 local event or community to attend this month',pts:10,time:'10 min',phase:'Weekly'},
-  ]},
-  {id:'smartguide',name:'Smart Guide Product',color:'#56a8f5',priority:'Priority 2',ps:'background:rgba(86,168,245,0.15);color:#56a8f5',tasks:[
-    {id:'s1',name:'Work on Smart Guide for 1 focused hour — one specific feature or fix only',pts:20,time:'1 hour',phase:'Daily'},
-    {id:'s2',name:'Identify 1 potential pilot partner (museum, tour company, city guide)',pts:15,time:'20 min',phase:'Weekly'},
-    {id:'s3',name:'Write a 3-bullet "problem-solution-impact" pitch for Smart Guide',pts:10,time:'15 min',phase:'One-time'},
-  ]},
-  {id:'danish',name:'Danish Language',color:'#a78bfa',priority:'Trust builder',ps:'background:rgba(167,139,250,0.15);color:#a78bfa',tasks:[
-    {id:'d1',name:'Attend or watch your Danish class lesson — restart this week',pts:15,time:'1 hour',phase:'Daily'},
-    {id:'d2',name:'Practice 10 new Danish words (Duolingo, Anki, or flashcards)',pts:10,time:'15 min',phase:'Daily'},
-  ]},
-  {id:'wolt',name:'Wolt — Survival Income',color:'#f2994a',priority:'Survival',ps:'background:rgba(242,153,74,0.15);color:#f2994a',tasks:[
-    {id:'w1',name:'Complete planned Wolt shift within your fixed scheduled hours only',pts:15,time:'fixed hrs',phase:'Scheduled'},
-    {id:'w2',name:"Log today's Wolt earnings in your finance tracker",pts:5,time:'2 min',phase:'Daily'},
-  ]},
-  {id:'mind',name:'Mind & Body',color:'#6fcf97',priority:'Foundation',ps:'background:rgba(111,207,151,0.15);color:#6fcf97',tasks:[
-    {id:'m1',name:'No social media before 10am — protect your morning brain',pts:10,time:'All morning',phase:'Daily'},
-    {id:'m2',name:'20-minute walk outside — clears the head, reduces anxiety',pts:10,time:'20 min',phase:'Daily'},
-  ]},
+  {
+    id:'consult', name:'IT Consultancy & Client Hunting', color:'#7c3aed',
+    priority:'Priority 1', ps:'background:rgba(124,58,237,0.12);color:#7c3aed',
+    tasks:[
+      { id:'c1', pts:15, time:'15 min', phase:'Daily', dow:null,
+        name:'Send 1 outreach message to a contact from your pipeline (use intern list from Monday)',
+        note:'Work through the list your interns collected. 1 message per day, personalised. Never mass-send.' },
+      { id:'c2', pts:10, time:'10 min', phase:'Daily', dow:null,
+        name:'Follow up with anyone who replied or went quiet in the last 3 days',
+        note:'A follow-up is not chasing. It is professionalism. Most deals close on the 3rd or 4th touch.' },
+      { id:'c3', pts:15, time:'15 min', phase:'Monday only', dow:[1],
+        name:"Monday: Brief interns — give them this week's research target (industry + city + company size)",
+        note:"Be specific: find 15 logistics companies in Copenhagen, 50-200 employees. Collect company name, LinkedIn of ops manager or CTO, website. Review last week's list first." },
+      { id:'c4', pts:15, time:'20 min', phase:'Tuesday only', dow:[2],
+        name:'Tuesday: Review intern contact list — qualify and add best leads to your outreach pipeline',
+        note:'Not every contact is worth messaging. Qualify: 50-200 employees? Non-tech industry? Likely need software help? Only add qualified leads to your pipeline.' },
+      { id:'c5', pts:10, time:'15 min', phase:'Wednesday only', dow:[3],
+        name:'Wednesday: Post or engage on LinkedIn — share an insight, comment on 3 posts in your target industry',
+        note:'One quality post per week + genuine comments builds more trust than daily noise. Focus on Danish business, AI, or software topics.' },
+      { id:'c6', pts:15, time:'20 min', phase:'Friday only', dow:[5],
+        name:'Friday: Review your full pipeline — who moved forward, who needs follow-up, what to do next week',
+        note:'Keep a simple list: prospect name, company, last contact date, next action. Without this review, leads fall through the cracks.' },
+      { id:'c7', pts:10, time:'10 min', phase:'Thursday only', dow:[4],
+        name:'Thursday: Check for 1 upcoming Copenhagen event worth attending this month',
+        note:'You only need 1 good event per month. If you already have one booked, use this time to prepare your 30-second intro instead.' },
+    ]
+  },
+  {
+    id:'smartguide', name:'Smart Guide Product', color:'#2563eb',
+    priority:'Priority 2', ps:'background:rgba(37,99,235,0.1);color:#2563eb',
+    tasks:[
+      { id:'s1', pts:20, time:'60-90 min', phase:'Daily', dow:null,
+        name:'Build session: work on ONE specific Smart Guide task for 60-90 minutes',
+        note:'Before you start, write down the one thing you will finish in this session. A specific task like: fix audio playback bug, or add location pin UI. Single focus only.' },
+      { id:'s2', pts:10, time:'10 min', phase:'Monday only', dow:[1],
+        name:"Monday: Write this week's Smart Guide build goal — what will be done by Friday?",
+        note:'One clear deliverable per week. A goal like: user can create a tour with 3 stops. Vague goals like improve the app are not good enough.' },
+      { id:'s3', pts:15, time:'15 min', phase:'Wednesday only', dow:[3],
+        name:'Wednesday: Contact 1 potential Smart Guide pilot partner (museum, tour company, hotel)',
+        note:'You need 1 real user more than 100 features. Target: Nationalmuseet, Copenhagen City Guides, Wonderful Copenhagen, local walking tour companies.' },
+      { id:'s4', pts:10, time:'10 min', phase:'Friday only', dow:[5],
+        name:"Friday: Review Smart Guide progress — what shipped, what's blocked, what's next",
+        note:'Write 3 lines: what you completed, what blocked you, the single next action. This is your build log and keeps you honest about real progress vs busy work.' },
+    ]
+  },
+  {
+    id:'danish', name:'Danish Language', color:'#0891b2',
+    priority:'Trust builder', ps:'background:rgba(8,145,178,0.1);color:#0891b2',
+    tasks:[
+      { id:'d1', pts:20, time:'2.5 hours', phase:'Mon & Wed', dow:[1,3],
+        name:'Attend Danish class (9:00 – 11:30)',
+        note:'You already paid for this. Show up. Sit in the front. Ask questions. The discomfort of not understanding is the learning.' },
+      { id:'d2', pts:10, time:'30 min', phase:'Tue/Thu/Fri/Sat', dow:[2,4,5,6],
+        name:'Danish practice: 30 min on Duolingo, Anki flashcards, or a Danish podcast',
+        note:'Consistency over intensity. 30 minutes daily beats a 3-hour session on weekends. If you miss a day, do not double up — just continue.' },
+      { id:'d3', pts:10, time:'15 min', phase:'Sunday', dow:[0],
+        name:'Sunday: Write 5 sentences in Danish using words you learned this week',
+        note:'Writing forces active use, not just recognition. Keep a small notebook. Re-reading old entries shows you real progress.' },
+    ]
+  },
+  {
+    id:'wolt', name:'Wolt — Survival Income', color:'#d97706',
+    priority:'Survival', ps:'background:rgba(217,119,6,0.1);color:#d97706',
+    tasks:[
+      { id:'w1', pts:15, time:'Shift hours', phase:'Shift days', dow:null,
+        name:'Complete Wolt shift (fixed hours only — close the app when shift ends)',
+        note:'Wolt is a means, not an identity. Work your fixed hours, earn your income, then close the app. Never deliver during your consultancy or Smart Guide work hours.' },
+      { id:'w2', pts:10, time:'5 min', phase:'Friday only', dow:[5],
+        name:"Friday: Log this week's Wolt earnings in Finance Tracker and check monthly target",
+        note:'Your target is 20-25k DKK/month. At 150 DKK/hr peak rate you need roughly 133-167 hours/month. Track weekly so you can adjust before the month ends.' },
+    ]
+  },
+  {
+    id:'mind', name:'Mind & Body', color:'#059669',
+    priority:'Foundation', ps:'background:rgba(5,150,105,0.1);color:#059669',
+    tasks:[
+      { id:'m1', pts:10, time:'Morning', phase:'Daily', dow:null,
+        name:'No social media until after your first work task is done',
+        note:'Complete one real task first — send one outreach message, write one line of code, study one Danish word. Then you can scroll. This reverses the dopamine trap.' },
+      { id:'m2', pts:10, time:'20 min', phase:'Daily', dow:null,
+        name:'Walk outside for 20 minutes — no phone, no podcast, just thinking',
+        note:'This is thinking time, not exercise. Your best ideas and solutions will come on these walks. Leave the phone at home or put it on airplane mode.' },
+      { id:'m3', pts:15, time:'10 min', phase:'Sunday', dow:[0],
+        name:'Sunday: Write 3 wins from this week and 1 thing to do differently next week',
+        note:'Not a journal. Just 3 wins (no matter how small) and 1 honest improvement. This prevents the feeling that nothing is moving — because you will see that things are.' },
+    ]
+  },
 ];
+
 const BIG_GOALS=[
   {title:'Land first IT consultancy client',desc:'Target: Danish SME or international company needing software / AI help. Aim for 10–20k DKK/month.',color:'#e8d5a3'},
   {title:'Smart Guide — first real pilot user',desc:'One museum, tour company or city. Real feedback beats solo building. Also your proof-of-concept story.',color:'#56a8f5'},
-  {title:'Find a Danish business partner',desc:'Someone who handles client acquisition. Offer equity. Pitch: "I build, you sell — we split the upside."',color:'#a78bfa'},
+  {title:'Find a Danish business partner',desc:'Someone who handles client acquisition. Offer equity. Pitch: I build, you sell — we split the upside.',color:'#a78bfa'},
   {title:'Pass Danish language course',desc:'Restart this week. 30 min/day is enough. Danish = trust and doors opened with local partners.',color:'#6fcf97'},
 ];
 
@@ -830,21 +983,39 @@ function fmtDateLabel(dateStr){
   return days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
 }
 
+function isFutureDate(dateStr){ return dateStr > todayStr(); }
+
 function setViewDate(dateStr){
   const today = todayStr();
-  if(dateStr > today) dateStr = today; // can't go into the future
+  // Allow up to 7 days into the future
+  const maxFuture = new Date(); maxFuture.setDate(maxFuture.getDate()+7);
+  const maxStr = maxFuture.toISOString().slice(0,10);
+  if(dateStr > maxStr) dateStr = maxStr;
   _viewDate = dateStr;
   // Update date picker
   document.getElementById('date-picker').value = dateStr;
   // Update header
   document.getElementById('today-date').textContent = fmtDateLabel(dateStr);
-  document.getElementById('view-page-title').textContent = isViewingToday() ? "Today's Missions" : "Past Day";
-  // Show/hide past banner and today button
+  const future = isFutureDate(dateStr);
+  const past = dateStr < today;
+  document.getElementById('view-page-title').textContent =
+    isViewingToday() ? "Today's Missions" : future ? "Upcoming Day" : "Past Day";
+  // Show/hide banner
   const banner = document.getElementById('past-banner');
   const todayBtn = document.getElementById('goto-today-btn');
   if(!isViewingToday()){
     banner.style.display='flex';
-    document.getElementById('past-banner-text').textContent = 'Viewing ' + fmtDateLabel(dateStr) + ' — changes saved to that date.';
+    if(future){
+      banner.style.background='rgba(45,212,191,0.06)';
+      banner.style.borderColor='rgba(45,212,191,0.2)';
+      banner.style.color='var(--teal)';
+      document.getElementById('past-banner-text').textContent = '👀 Preview — ' + fmtDateLabel(dateStr) + '. Tasks are read-only for future dates.';
+    } else {
+      banner.style.background='rgba(242,153,74,0.08)';
+      banner.style.borderColor='rgba(242,153,74,0.25)';
+      banner.style.color='var(--amber)';
+      document.getElementById('past-banner-text').textContent = 'Viewing ' + fmtDateLabel(dateStr) + ' — changes saved to that date.';
+    }
     todayBtn.style.display='block';
   } else {
     banner.style.display='none';
@@ -858,7 +1029,9 @@ function shiftDay(delta){
   const d = new Date(_viewDate + 'T12:00:00');
   d.setDate(d.getDate() + delta);
   const newDate = d.toISOString().slice(0,10);
-  if(newDate <= todayStr()) setViewDate(newDate);
+  const maxFuture = new Date(); maxFuture.setDate(maxFuture.getDate()+7);
+  const maxStr = maxFuture.toISOString().slice(0,10);
+  if(newDate <= maxStr) setViewDate(newDate);
 }
 
 function onDatePick(val){ if(val) setViewDate(val); }
@@ -875,6 +1048,7 @@ function showPage(name,btn){
   if(name==='social')renderSocial();
   if(name==='analytics')renderAnalytics();
   if(name==='plan') renderPlanChecks();
+  if(name==='finance'){renderFinance();initFinancePage();}
 }
 
 // ══ MODAL ══
@@ -947,7 +1121,8 @@ function renderPillars(){
   if(!S.customDailyTasks)S.customDailyTasks=[];
   PILLARS.forEach(p=>{
     const custom=S.customDailyTasks.filter(t=>t.pillar===p.id);
-    const all=[...p.tasks,...custom];
+    const activeTasks=p.tasks.filter(t=>isTaskActiveOnDate(t,_viewDate));
+    const all=[...activeTasks,...custom];
     const _vc=getCheckedForDate(_viewDate);
     const earned=all.filter(t=>_vc[t.id]).reduce((a,t)=>a+t.pts,0);
     const total=all.reduce((a,t)=>a+t.pts,0);
@@ -957,7 +1132,7 @@ function renderPillars(){
     div.innerHTML=`<div class="pillar-head" onclick="togglePillar('${p.id}')"><div class="pillar-info"><div class="pillar-dot" style="background:${p.color}"></div><div class="pillar-name">${p.name}</div><span class="pillar-badge chip" style="${p.ps}">${p.priority}</span></div><div class="pillar-right"><span class="pillar-pts">${earned}/${total} pts</span><span class="pillar-chevron">▾</span></div></div><div class="pillar-progress"><div class="pillar-progress-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="pillar-body" id="body-${p.id}"></div>`;
     container.appendChild(div);
     const body=document.getElementById('body-'+p.id);
-    p.tasks.forEach(t=>body.appendChild(makeRow(t,false,p.id)));
+    p.tasks.filter(t=>isTaskActiveOnDate(t,_viewDate)).forEach(t=>body.appendChild(makeRow(t,false,p.id)));
     custom.forEach(t=>body.appendChild(makeRow(t,true,p.id)));
     const addRow=document.createElement('div');
     addRow.style.cssText='display:flex;gap:8px;padding:10px 1.25rem;border-top:1px solid var(--border)';
@@ -970,23 +1145,29 @@ function renderPillars(){
 function makeRow(t,isCustom,pillarId){
   const _vc=getCheckedForDate(_viewDate);
   const done=!!_vc[t.id];
+  const isFuture=isFutureDate(_viewDate);
   const loggedMins=getLoggedMinsForDate(t.id,_viewDate);
   const row=document.createElement('div');row.className='task-item';
   const meta=isCustom
     ?`<span class="chip chip-pts">+${t.pts} XP</span><span class="chip chip-custom">Custom</span>`
-    :`<span class="chip chip-pts">+${t.pts} XP</span><span class="chip chip-phase">${t.phase}</span><span class="chip chip-time-est">${t.time}</span>`;
+    :`<span class="chip chip-pts">+${t.pts} XP</span><span class="chip chip-phase">${t.phase||'Daily'}</span><span class="chip chip-time-est">${t.time}</span>`;
+  const noteHtml=(!isCustom&&t.note)?`<div class="task-note">${t.note}</div>`:'';
   const timeChip=loggedMins>0?`<span class="chip chip-logged">⏱ ${fmtMins(loggedMins)}</span>`:'';
+  const checkHtml=isFuture
+    ?`<div class="check" style="cursor:default;opacity:0.25;font-size:14px" title="Future — read only">○</div>`
+    :`<div class="check ${done?'done':''}" onclick="onCheckClick('${t.id}','${esc(t.name)}',${isCustom},${t.pts},'${pillarId}')">${done?'✓':''}</div>`;
   row.innerHTML=`
-    <div class="check ${done?'done':''}" onclick="onCheckClick('${t.id}','${esc(t.name)}',${isCustom},${t.pts},'${pillarId}')">${done?'✓':''}</div>
-    <div class="task-text">
-      <div class="task-name ${done?'crossed':''}">${t.name}</div>
+    ${checkHtml}
+    <div class="task-text" style="${isFuture?'opacity:0.6':''}">
+      <div class="task-name">${t.name}</div>
       <div class="task-meta">${meta}${timeChip}</div>
+      ${noteHtml||''}
     </div>
-    ${isCustom?`<button class="del-btn" onclick="deleteDailyTask('${t.id}')">×</button>`:''}`;
+    ${isCustom&&!isFuture?`<button class="del-btn" onclick="deleteDailyTask('${t.id}')">×</button>`:''}`;
   return row;
 }
 
-function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function esc(s){return s.replace(/'/g,"\'").replace(/"/g,'&quot;');}
 
 function onCheckClick(taskId,taskName,isCustom,pts,pillarId){
   const _vc=getCheckedForDate(_viewDate);
@@ -1019,7 +1200,9 @@ function deleteDailyTask(id){
 }
 
 function updateStats(){
-  const all=[...PILLARS.flatMap(p=>p.tasks),...(S.customDailyTasks||[])];
+  const activeTasks=PILLARS.flatMap(p=>p.tasks.filter(t=>isTaskActiveOnDate(t,_viewDate)));
+  const custom=S.customDailyTasks||[];
+  const all=[...activeTasks,...custom];
   const _vc=getCheckedForDate(_viewDate);
   const done=all.filter(t=>_vc[t.id]);
   const xp=done.reduce((a,t)=>a+t.pts,0);
@@ -1520,12 +1703,152 @@ function renderPlanChecks(){
 }
 
 
-const QUOTES = ['The gap between where you are and where you want to be is called work.', 'You are not behind. You are exactly where your effort has placed you.', 'Every expert was once a beginner who refused to quit.', 'Your runway is short. Your potential is not. Move.', 'One Danish outreach message today beats ten planned tomorrow.', 'Wolt pays the bills. Consistency builds the future.', 'The founder who shows up daily beats the one who works in bursts.', 'You moved countries, registered a company, and started building. You are already in the top 1%.', 'Discomfort is the price of entry for every good thing.', "Small daily actions compound. Start today's streak right now.", 'The market does not care about your limiting beliefs. Ship anyway.', 'One client is all it takes to change everything. Find them.', 'Learning Danish is not a distraction. It is your competitive edge.', 'Your interns can only be as effective as your instructions. Lead them.', 'Progress is not always visible. Keep going anyway.'];
+const QUOTES = [
+  "You left your country, crossed the world, registered a company, and started building. Most people never do one of those things. You did all four.",
+  "The difference between who you are and who you want to be is what you do today — not what you plan.",
+  "Every single client you will ever have is one conversation away. Send the message.",
+  "Wolt is not your identity. It is your bridge. Keep walking across it.",
+  "You do not need permission to be successful. You need repetition.",
+  "The fear you feel is proof that what you are building matters. Keep going.",
+  "One year from now you will wish you had started harder today.",
+  "Your story — immigrant, builder, survivor — is not a weakness in Denmark. It is the most compelling pitch in the room.",
+  "Stop waiting to feel ready. The people who changed their lives never felt ready either.",
+  "A 2% improvement every day is a 7x improvement in a year. Just show up.",
+  "The consultancy client who changes everything is looking for someone exactly like you. Go find them first.",
+  "Scrolling is borrowing time from your future self at a very high interest rate.",
+  "Hard mode is still winnable. You just have to play smarter than everyone else.",
+  "Danish is not just a language. It is a handshake that says: I am here, I am committed, I belong.",
+  "Every hour you put into Smart Guide is an hour your future competitors cannot take back.",
+  "You are not behind. You are early. The founders who win big always look foolish before they look brilliant.",
+  "Discomfort is the tuition for becoming the person you need to be.",
+  "The world does not reward talent. It rewards people who show up when talent takes the day off.",
+  "One message, one call, one meeting — that is all that separates you from your first client.",
+  "You have already survived things that would have stopped most people. This is just another day of building.",
+  "Compounding works on habits the same way it works on money. Start the streak today.",
+  "Your interns, your product, your language skills — everything multiplies when you multiply your focus.",
+  "The most dangerous thing you can do right now is nothing.",
+  "Ship something today. Anything. Momentum is the rarest resource a founder has.",
+  "You did not come this far to only come this far.",
+];
 function renderDailyQuote(){
   const el = document.getElementById('daily-quote');
   if(!el) return;
-  const idx = new Date().getDate() % QUOTES.length;
+  const seed = new Date().getFullYear()*10000 + (new Date().getMonth()+1)*100 + new Date().getDate();
+  const idx = seed % QUOTES.length;
   el.innerHTML = QUOTES[idx] + '<span style="margin-left:auto;font-size:11px;color:var(--text3);font-style:normal;white-space:nowrap;flex-shrink:0">Daily reminder</span>';
+}
+
+
+// ══ FINANCE TRACKER ══
+function initFinancePage(){
+  const today = todayStr();
+  document.getElementById('fin-date').value = today;
+  document.getElementById('fin-date').max = today;
+  const ti = document.getElementById('fin-target-input');
+  if(ti) ti.value = S.financeTarget||20000;
+}
+
+function getMonthEntries(yearMonth){
+  return (S.financeEntries||[]).filter(e=>e.date.startsWith(yearMonth));
+}
+
+function renderFinance(){
+  const now = new Date();
+  const ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const entries = getMonthEntries(ym);
+  const total = entries.reduce((a,e)=>a+e.amount,0);
+  const target = S.financeTarget||20000;
+  const pct = Math.min(100,Math.round(total/target*100));
+
+  document.getElementById('fin-month-total').textContent = total.toLocaleString('da-DK');
+  document.getElementById('fin-month-target').textContent = target.toLocaleString('da-DK');
+  document.getElementById('fin-month-pct').textContent = pct+'%';
+  document.getElementById('fin-progress-fill').style.width = pct+'%';
+  document.getElementById('fin-target-label').textContent = 'Target: '+target.toLocaleString('da-DK')+' DKK';
+
+  // Entries list
+  const listEl = document.getElementById('fin-entries-list');
+  const monthEntries = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  if(monthEntries.length===0){
+    listEl.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0">No entries this month. Log your first shift above.</div>';
+  } else {
+    listEl.innerHTML='';
+    monthEntries.forEach(e=>{
+      const srcColors={
+        wolt:'background:rgba(217,119,6,0.1);color:#d97706',
+        consult:'background:rgba(124,58,237,0.1);color:#7c3aed',
+        other:'background:rgba(8,145,178,0.1);color:#0891b2'
+      };
+      const srcLabels={wolt:'Wolt',consult:'Consultancy',other:'Other'};
+      const row=document.createElement('div');
+      row.className='fin-entry';
+      row.innerHTML=`
+        <div class="fin-entry-left">
+          <span class="fin-entry-source chip" style="${srcColors[e.source]||srcColors.other}">${srcLabels[e.source]||e.source}</span>
+          <span class="fin-entry-note">${e.note||'—'}</span>
+        </div>
+        <span class="fin-entry-date">${e.date}</span>
+        <span class="fin-entry-amount">+${e.amount.toLocaleString('da-DK')} kr</span>
+        <button class="del-btn" onclick="deleteFinanceEntry('${e.id}')">×</button>`;
+      listEl.appendChild(row);
+    });
+  }
+
+  // 6-month chart
+  destroyChart('finance');
+  const months=[], totals=[], woltTotals=[], consultTotals=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const ymKey=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const label=d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+    const ents=getMonthEntries(ymKey);
+    months.push(label);
+    totals.push(ents.reduce((a,e)=>a+e.amount,0));
+    woltTotals.push(ents.filter(e=>e.source==='wolt').reduce((a,e)=>a+e.amount,0));
+    consultTotals.push(ents.filter(e=>e.source==='consult').reduce((a,e)=>a+e.amount,0));
+  }
+  const ctx=document.getElementById('chart-finance');
+  if(ctx){
+    _chartInstances['finance']=new Chart(ctx.getContext('2d'),{
+      type:'bar',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Wolt',data:woltTotals,backgroundColor:'rgba(217,119,6,0.7)',borderRadius:4,borderSkipped:false,stack:'income'},
+          {label:'Consultancy',data:consultTotals,backgroundColor:'rgba(124,58,237,0.7)',borderRadius:4,borderSkipped:false,stack:'income'},
+          {label:'Target',data:Array(6).fill(target),type:'line',borderColor:'rgba(5,150,105,0.6)',borderDash:[4,4],borderWidth:2,pointRadius:0,fill:false,stack:undefined},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('da-DK')} DKK`}}},scales:{x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:11}}},y:{grid:{color:'rgba(124,58,237,0.06)'},ticks:{color:'#94a3b8',font:{size:11},callback:v=>v.toLocaleString('da-DK')},beginAtZero:true,stacked:true}}}
+    });
+  }
+}
+
+function addFinanceEntry(){
+  const date=document.getElementById('fin-date').value;
+  const source=document.getElementById('fin-source').value;
+  const amount=parseInt(document.getElementById('fin-amount').value)||0;
+  const note=document.getElementById('fin-note').value.trim();
+  if(!date||amount<=0){showToast('Please enter a date and amount','red');return;}
+  if(!S.financeEntries) S.financeEntries=[];
+  S.financeEntries.push({id:'fe'+Date.now(),date,source,amount,note});
+  document.getElementById('fin-amount').value='';
+  document.getElementById('fin-note').value='';
+  save();
+  renderFinance();
+  showToast('+'+amount.toLocaleString('da-DK')+' DKK logged ✓','green');
+}
+
+function deleteFinanceEntry(id){
+  S.financeEntries=(S.financeEntries||[]).filter(e=>e.id!==id);
+  save();renderFinance();
+}
+
+function saveFinanceTarget(){
+  const val=parseInt(document.getElementById('fin-target-input').value)||20000;
+  S.financeTarget=val;
+  save();renderFinance();
+  showToast('Target saved: '+val.toLocaleString('da-DK')+' DKK/month','green');
 }
 
 // ══ INIT ══
@@ -1534,7 +1857,8 @@ function init(){
   _viewDate = todayStr();
   const picker = document.getElementById('date-picker');
   picker.value = _viewDate;
-  picker.max = _viewDate; // can't pick future dates
+  const maxFutureInit = new Date(); maxFutureInit.setDate(maxFutureInit.getDate()+7);
+  picker.max = maxFutureInit.toISOString().slice(0,10); // allow up to 7 days ahead
   setViewDate(_viewDate);
   renderWeekly();renderGoals();updateSidebar();setTimeout(renderPlanChecks,100);renderDailyQuote();
 }
